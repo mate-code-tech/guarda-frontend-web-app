@@ -44,7 +44,9 @@ export function useSpeechToText(
 
   const isSupported =
     typeof window !== "undefined" &&
-    ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
+    ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) &&
+    typeof navigator !== "undefined" &&
+    !!navigator.mediaDevices;
 
   // Pre-request microphone permission (call early, e.g. on user tap)
   const requestPermission = useCallback(async (): Promise<boolean> => {
@@ -146,13 +148,21 @@ export function useSpeechToText(
     try {
       recognition.start();
     } catch (err) {
-      // start() can throw if called too fast after abort
       console.warn("STT start error, retrying:", err);
-      restartTimeoutRef.current = setTimeout(() => {
-        if (shouldBeListeningRef.current) {
-          start();
+      // On mobile, start() can throw if mic permission is still being resolved.
+      // Retry with getUserMedia first to ensure permission is granted.
+      restartTimeoutRef.current = setTimeout(async () => {
+        if (!shouldBeListeningRef.current) return;
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach((t) => t.stop());
+          if (shouldBeListeningRef.current) start();
+        } catch {
+          console.warn("STT: mic permission denied, cannot listen");
+          shouldBeListeningRef.current = false;
+          onErrorRef.current?.("not-allowed");
         }
-      }, 300);
+      }, 500);
     }
   }, [isSupported, lang, continuous, interimResults]);
 

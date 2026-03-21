@@ -200,9 +200,9 @@ export default function Home() {
     initDoneRef.current = true;
     setStarted(true);
 
-    // Request mic permission immediately on user gesture (before anything else)
-    // This ensures the permission dialog appears now, not later when TTS finishes.
-    await requestPermission();
+    // Request mic permission in background — don't block the flow.
+    // If it fails, STT will request again when needed.
+    requestPermission().catch(() => {});
 
     let guestId = localStorage.getItem(GUEST_ID_KEY);
 
