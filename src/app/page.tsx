@@ -35,13 +35,14 @@ export default function Home() {
   const [interactions, setInteractions] = useState<InteractionResult[]>([]);
   const [profileWarnings, setProfileWarnings] = useState<ProfileWarning[]>([]);
 
+  const [textInput, setTextInput] = useState("");
   const conversationIdRef = useRef<string | null>(null);
   const medicationsRef = useRef<Medication[]>([]);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isProcessingRef = useRef(false);
   const initDoneRef = useRef(false);
 
-  const { speak, stop: stopTTS } = useTTS();
+  const { speak, stop: stopTTS, unlock: unlockAudio } = useTTS();
 
   // --- Handle backend response: TTS + tool-calls ---
   const handleResponse = useCallback(
@@ -123,13 +124,15 @@ export default function Home() {
         }
       }
 
-      // TTS done → start listening
+      // TTS done → start listening (or show text input fallback)
       setUserTranscript("");
       setOrbState("listening");
-      sttStart();
+      if (sttSupported) {
+        sttStart();
+      }
       isProcessingRef.current = false;
     },
-    [speak]
+    [speak, sttSupported]
   );
 
   // --- Send user message to backend ---
@@ -180,6 +183,7 @@ export default function Home() {
     start: sttStart,
     stop: sttStop,
     requestPermission,
+    isSupported: sttSupported,
   } = useSpeechToText({
     lang: "es-AR",
     continuous: true,
@@ -199,6 +203,9 @@ export default function Home() {
     if (initDoneRef.current) return;
     initDoneRef.current = true;
     setStarted(true);
+
+    // Unlock audio playback on iOS (must happen during user gesture)
+    unlockAudio();
 
     // Request mic permission in background — don't block the flow.
     // If it fails, STT will request again when needed.
@@ -226,7 +233,7 @@ export default function Home() {
       setOrbState("idle");
       isProcessingRef.current = false;
     }
-  }, [handleResponse, requestPermission]);
+  }, [handleResponse, requestPermission, unlockAudio]);
 
   // Hydration-safe mount flag
   useEffect(() => {
@@ -238,6 +245,7 @@ export default function Home() {
     return () => {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
       stopTTS();
+      sttStop();
     };
   }, [stopTTS]);
 
@@ -297,6 +305,16 @@ export default function Home() {
               orbState={orbState}
               assistantMessage={assistantMessage}
               transcript={userTranscript}
+              showTextInput={!sttSupported}
+              textInput={textInput}
+              onTextInputChange={setTextInput}
+              onTextInputSubmit={() => {
+                if (textInput.trim()) {
+                  const msg = textInput;
+                  setTextInput("");
+                  sendUserMessage(msg);
+                }
+              }}
             />
           </motion.div>
         )}
