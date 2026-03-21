@@ -1,0 +1,11 @@
+export default function LandingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="w-full !max-w-none !rounded-none !bg-white !pt-0">
+      {children}
+    </div>
+  );
+}

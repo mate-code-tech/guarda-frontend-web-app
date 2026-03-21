@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Base fill -->
+    <radialGradient id="base" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#C4B5FD"/>
+      <stop offset="60%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </radialGradient>
+
+    <!-- Nebula blob 1 — top-left lavender -->
+    <radialGradient id="neb1" cx="35%" cy="30%" r="45%">
+      <stop offset="0%" stop-color="#DDD6FE" stop-opacity="0.7"/>
+      <stop offset="40%" stop-color="#C4B5FD" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Nebula blob 2 — bottom-right orchid -->
+    <radialGradient id="neb2" cx="65%" cy="65%" r="50%">
+      <stop offset="0%" stop-color="#C084FC" stop-opacity="0.65"/>
+      <stop offset="35%" stop-color="#A78BFA" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Nebula blob 3 — center-left bright lavender -->
+    <radialGradient id="neb3" cx="30%" cy="55%" r="40%">
+      <stop offset="0%" stop-color="#E8D2FF" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#D8B4FE" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Nebula blob 4 — top-right purple -->
+    <radialGradient id="neb4" cx="70%" cy="35%" r="42%">
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.6"/>
+      <stop offset="30%" stop-color="#8B5CF6" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Core glow — central white highlight -->
+    <radialGradient id="core" cx="48%" cy="45%" r="30%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="25%" stop-color="#EDE1FF" stop-opacity="0.2"/>
+      <stop offset="55%" stop-color="#C4B5FD" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Wisp 1 — rotating highlight -->
+    <radialGradient id="wisp1" cx="40%" cy="38%" r="28%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="50%" stop-color="#DDD6FE" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#C084FC" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Wisp 2 -->
+    <radialGradient id="wisp2" cx="58%" cy="60%" r="25%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="50%" stop-color="#DDD6FE" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#C084FC" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Outer glow -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="65%" stop-color="#A78BFA" stop-opacity="0"/>
+      <stop offset="82%" stop-color="#8B5CF6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Clip to circle -->
+    <clipPath id="orbClip">
+      <circle cx="256" cy="256" r="210"/>
+    </clipPath>
+  </defs>
+
+  <!-- Outer soft glow -->
+  <circle cx="256" cy="256" r="256" fill="url(#glow)"/>
+
+  <!-- Orb body -->
+  <g clip-path="url(#orbClip)">
+    <!-- Base -->
+    <circle cx="256" cy="256" r="210" fill="url(#base)"/>
+
+    <!-- Nebula layers -->
+    <circle cx="256" cy="256" r="210" fill="url(#neb1)"/>
+    <circle cx="256" cy="256" r="210" fill="url(#neb2)"/>
+    <circle cx="256" cy="256" r="210" fill="url(#neb3)"/>
+    <circle cx="256" cy="256" r="210" fill="url(#neb4)"/>
+
+    <!-- Core highlight -->
+    <circle cx="256" cy="256" r="210" fill="url(#core)"/>
+
+    <!-- Wisps -->
+    <circle cx="256" cy="256" r="210" fill="url(#wisp1)"/>
+    <circle cx="256" cy="256" r="210" fill="url(#wisp2)"/>
+  </g>
+</svg>
