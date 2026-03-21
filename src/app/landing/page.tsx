@@ -62,11 +62,60 @@ const FEATURES = [
   },
 ];
 
+const NAV_LINKS = [
+  { href: "#diferenciador", label: "Por qué Guarda" },
+  { href: "#como-funciona", label: "Cómo funciona" },
+  { href: "#features", label: "Ventajas" },
+  { href: "#para-quien", label: "Para quién" },
+];
+
+function scrollTo(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+  e.preventDefault();
+  const id = href.replace("#", "");
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth" });
+  } else if (href === "#") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
 export default function LandingPage() {
   return (
     <div className="flex w-full flex-col items-center overflow-x-hidden bg-white">
+      {/* ========== HEADER ========== */}
+      <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+          <a
+            href="#"
+            onClick={(e) => scrollTo(e, "#")}
+            className="text-lg font-bold text-purple-600"
+          >
+            Guarda
+          </a>
+          <nav className="hidden items-center gap-6 md:flex">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => scrollTo(e, link.href)}
+                className="text-sm font-medium text-gray-500 transition-colors hover:text-purple-600"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <Link
+            href="/"
+            className="rounded-full bg-purple-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-700"
+          >
+            Probar
+          </Link>
+        </div>
+      </header>
+
       {/* ========== HERO ========== */}
-      <section className="flex w-full max-w-5xl flex-col items-center gap-8 px-6 pb-16 pt-20 text-center md:pt-28">
+      <section id="hero" className="flex w-full max-w-5xl flex-col items-center gap-8 px-6 pb-16 pt-20 text-center md:pt-28">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -114,7 +163,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== DIFERENCIADOR ========== */}
-      <section className="w-full bg-purple-50 py-14">
+      <section id="diferenciador" className="w-full scroll-mt-16 bg-purple-50 py-14">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 text-center">
           <span className="rounded-full bg-purple-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-purple-600">
             No es un chatbot cualquiera
@@ -132,7 +181,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== CÓMO FUNCIONA ========== */}
-      <section className="w-full py-16">
+      <section id="como-funciona" className="w-full scroll-mt-16 py-16">
         <div className="mx-auto max-w-4xl px-6">
           <h2 className="mb-10 text-center text-2xl font-bold text-gray-900 md:text-3xl">
             Cómo funciona
@@ -165,7 +214,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== FEATURES ========== */}
-      <section className="w-full bg-gray-50 py-16">
+      <section id="features" className="w-full scroll-mt-16 bg-gray-50 py-16">
         <div className="mx-auto max-w-4xl px-6">
           <h2 className="mb-10 text-center text-2xl font-bold text-gray-900 md:text-3xl">
             Por qué elegir Guarda
@@ -200,7 +249,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== PARA QUIÉN ========== */}
-      <section className="w-full py-16">
+      <section id="para-quien" className="w-full scroll-mt-16 py-16">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
           <Heart className="h-10 w-10 text-purple-400" />
           <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
