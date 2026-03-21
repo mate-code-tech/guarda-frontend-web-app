@@ -83,6 +83,12 @@ export function useSpeechToText(
     // Signal that we want to be listening
     shouldBeListeningRef.current = true;
 
+    // Cancel any pending restart from a previous onend
+    if (restartTimeoutRef.current) {
+      clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
+    }
+
     // Clean up any existing instance
     if (recognitionRef.current) {
       recognitionRef.current.abort();
@@ -130,7 +136,13 @@ export function useSpeechToText(
       onErrorRef.current?.(event.error);
     };
 
+    recognitionRef.current = recognition;
+
     recognition.onend = () => {
+      // Only act if this is still the active recognition instance.
+      // A stale onend from an aborted instance must be ignored.
+      if (recognitionRef.current !== recognition) return;
+
       setIsListening(false);
       // On mobile, recognition ends after each utterance even in continuous mode.
       // Auto-restart if we should still be listening.
@@ -142,8 +154,6 @@ export function useSpeechToText(
         }, 200);
       }
     };
-
-    recognitionRef.current = recognition;
 
     try {
       recognition.start();
