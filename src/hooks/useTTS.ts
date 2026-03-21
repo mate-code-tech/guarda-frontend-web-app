@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 type TTSStatus = "idle" | "loading" | "playing" | "error";
 
@@ -9,10 +9,26 @@ export function useTTS() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const urlRef = useRef<string | null>(null);
 
+  // Create a single Audio element and reuse it.
+  // On mobile (especially iOS), creating new Audio() each time can fail
+  // after the first play because only one audio context is allowed.
+  useEffect(() => {
+    audioRef.current = new Audio();
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+      if (urlRef.current) {
+        URL.revokeObjectURL(urlRef.current);
+      }
+    };
+  }, []);
+
   const stop = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+      audioRef.current.src = "";
     }
     if (urlRef.current) {
       URL.revokeObjectURL(urlRef.current);
@@ -38,26 +54,43 @@ export function useTTS() {
             return res.blob();
           })
           .then((blob) => {
+            // Clean up previous URL
+            if (urlRef.current) {
+              URL.revokeObjectURL(urlRef.current);
+            }
+
             const url = URL.createObjectURL(blob);
             urlRef.current = url;
 
-            const audio = new Audio(url);
-            audioRef.current = audio;
+            const audio = audioRef.current!;
 
-            audio.addEventListener("ended", () => {
+            // Remove old listeners to avoid leaks
+            const onEnded = () => {
+              audio.removeEventListener("ended", onEnded);
+              audio.removeEventListener("error", onError);
               setStatus("idle");
-              URL.revokeObjectURL(url);
-              urlRef.current = null;
               resolve();
-            });
+            };
 
-            audio.addEventListener("error", () => {
+            const onError = () => {
+              audio.removeEventListener("ended", onEnded);
+              audio.removeEventListener("error", onError);
               setStatus("error");
               reject(new Error("Audio playback error"));
-            });
+            };
 
+            audio.addEventListener("ended", onEnded);
+            audio.addEventListener("error", onError);
+
+            // Reuse the same element — set src and play
+            audio.src = url;
             setStatus("playing");
-            audio.play().catch(reject);
+            audio.play().catch((err) => {
+              audio.removeEventListener("ended", onEnded);
+              audio.removeEventListener("error", onError);
+              setStatus("error");
+              reject(err);
+            });
           })
           .catch((err) => {
             setStatus("error");
