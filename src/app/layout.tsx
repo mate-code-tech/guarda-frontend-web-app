@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Guarda",
   description:
     "Asistente que detecta riesgos en combinaciones de medicamentos",
+  icons: {
+    icon: "/orb.svg",
+    apple: "/orb.svg",
+  },
 };
 
 export const viewport: Viewport = {
