@@ -1,14 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GreetingView } from "@/components/GreetingView";
 import { MedicationsView } from "@/components/MedicationsView";
 import { ResultsView } from "@/components/ResultsView";
+import { createGuest } from "@/lib/api";
+
+const GUEST_ID_KEY = "guarda_guest_id";
 
 type AppState = "greeting" | "medications" | "results";
 
 export default function Home() {
   const [state, setState] = useState<AppState>("greeting");
+
+  useEffect(() => {
+    const existing = localStorage.getItem(GUEST_ID_KEY);
+    if (existing) return;
+
+    createGuest().then((guest) => {
+      localStorage.setItem(GUEST_ID_KEY, guest.id);
+    });
+  }, []);
 
   return (
     <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-white pt-[62px]">
