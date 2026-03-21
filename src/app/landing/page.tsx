@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck,
   Mic,
@@ -114,49 +115,208 @@ function scrollTo(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
   }
 }
 
-/* ---- Phone mockup showing the app UI ---- */
+/* ---- Animated phone mockup simulating app flow ---- */
+
+import type { OrbState } from "@/components/Orb";
+
+type MockStep = "greeting" | "listening" | "thinking" | "medications" | "results";
+
+const MOCK_FLOW: { step: MockStep; orbState: OrbState; duration: number }[] = [
+  { step: "greeting", orbState: "speaking", duration: 3000 },
+  { step: "listening", orbState: "listening", duration: 3500 },
+  { step: "thinking", orbState: "thinking", duration: 2000 },
+  { step: "medications", orbState: "speaking", duration: 3000 },
+  { step: "thinking", orbState: "thinking", duration: 1500 },
+  { step: "results", orbState: "idle", duration: 4000 },
+];
+
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -12 },
+  transition: { duration: 0.35 },
+};
+
 function PhoneMockup() {
+  const [flowIndex, setFlowIndex] = useState(0);
+  const current = MOCK_FLOW[flowIndex];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFlowIndex((prev) => (prev + 1) % MOCK_FLOW.length);
+    }, current.duration);
+    return () => clearTimeout(timer);
+  }, [flowIndex, current.duration]);
+
   return (
     <div className="relative mx-auto w-[260px] md:w-[280px]">
-      {/* Phone frame */}
       <div className="rounded-[36px] border-[6px] border-gray-900 bg-white p-3 shadow-2xl shadow-purple-200/40">
-        {/* Notch */}
         <div className="mx-auto mb-3 h-[6px] w-20 rounded-full bg-gray-900" />
-        {/* Screen content */}
-        <div className="flex flex-col items-center gap-4 rounded-[24px] bg-white px-4 pb-5 pt-6">
-          <Orb size="small" state="speaking" />
-          <p className="text-center text-[11px] text-gray-500">
-            Veo que mencionás ibuprofeno y enalapril...
-          </p>
-          {/* Mini medication cards */}
-          <div className="flex w-full flex-col gap-1.5">
-            {["Ibuprofeno", "Enalapril", "Metformina"].map((med) => (
-              <div
-                key={med}
-                className="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
+        {/* Screen — fixed height so phone doesn't resize */}
+        <div className="flex h-[340px] flex-col items-center rounded-[24px] bg-white px-4 pt-5">
+          <AnimatePresence mode="wait">
+            {/* ---- GREETING ---- */}
+            {current.step === "greeting" && (
+              <motion.div
+                key="greeting"
+                className="flex flex-1 flex-col items-center justify-center gap-4"
+                {...screenTransition}
               >
-                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-500">
-                  <Pill className="h-2.5 w-2.5 text-white" />
+                <Orb size="small" state={current.orbState} />
+                <p className="text-center text-[11px] text-gray-500">
+                  Hola, contame qué medicamentos tomás.
+                </p>
+              </motion.div>
+            )}
+
+            {/* ---- LISTENING ---- */}
+            {current.step === "listening" && (
+              <motion.div
+                key="listening"
+                className="flex flex-1 flex-col items-center justify-center gap-4"
+                {...screenTransition}
+              >
+                <Orb size="small" state={current.orbState} />
+                <p className="text-center text-[10px] font-medium text-purple-400">
+                  Escuchando...
+                </p>
+                <motion.p
+                  className="text-center text-[11px] text-purple-600"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  &quot;Tomo ibuprofeno, enalapril y metformina&quot;
+                </motion.p>
+              </motion.div>
+            )}
+
+            {/* ---- THINKING ---- */}
+            {current.step === "thinking" && (
+              <motion.div
+                key={`thinking-${flowIndex}`}
+                className="flex flex-1 flex-col items-center justify-center gap-4"
+                {...screenTransition}
+              >
+                <Orb size="small" state={current.orbState} />
+                <div className="flex items-center gap-1.5">
+                  <motion.div
+                    className="h-1.5 w-1.5 rounded-full bg-purple-400"
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 0.8, repeat: Infinity, delay: 0 }}
+                  />
+                  <motion.div
+                    className="h-1.5 w-1.5 rounded-full bg-purple-400"
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }}
+                  />
+                  <motion.div
+                    className="h-1.5 w-1.5 rounded-full bg-purple-400"
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }}
+                  />
                 </div>
-                <span className="flex-1 text-[10px] font-semibold text-gray-800">
-                  {med}
-                </span>
-                <CircleCheck className="h-3 w-3 text-green-500" />
-              </div>
-            ))}
-          </div>
-          {/* Mini result card */}
-          <div className="w-full rounded-lg border border-red-200 bg-red-50 p-2">
-            <div className="flex items-center gap-1">
-              <div className="h-2 w-2 rounded-full bg-red-500" />
-              <span className="text-[9px] font-bold text-red-600">
-                Peligroso
-              </span>
-            </div>
-            <p className="mt-0.5 text-[9px] text-gray-600">
-              Ibuprofeno + Enalapril
-            </p>
-          </div>
+                <p className="text-[10px] text-gray-400">Procesando...</p>
+              </motion.div>
+            )}
+
+            {/* ---- MEDICATIONS ---- */}
+            {current.step === "medications" && (
+              <motion.div
+                key="medications"
+                className="flex w-full flex-1 flex-col items-center gap-3 pt-2"
+                {...screenTransition}
+              >
+                <Orb size="small" state={current.orbState} />
+                <p className="text-center text-[10px] text-gray-500">
+                  Encontré tus medicamentos
+                </p>
+                <div className="flex w-full flex-col gap-1.5">
+                  {["Ibuprofeno", "Enalapril", "Metformina"].map((med, i) => (
+                    <motion.div
+                      key={med}
+                      className="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.2 }}
+                    >
+                      <div className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-500">
+                        <Pill className="h-2.5 w-2.5 text-white" />
+                      </div>
+                      <span className="flex-1 text-[10px] font-semibold text-gray-800">
+                        {med}
+                      </span>
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: i * 0.2 + 0.3 }}
+                      >
+                        <CircleCheck className="h-3 w-3 text-green-500" />
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* ---- RESULTS ---- */}
+            {current.step === "results" && (
+              <motion.div
+                key="results"
+                className="flex w-full flex-1 flex-col items-center gap-3 pt-2"
+                {...screenTransition}
+              >
+                <Orb size="small" state={current.orbState} />
+                <motion.p
+                  className="text-[10px] font-semibold text-green-500"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Análisis completo
+                </motion.p>
+                {/* Severe */}
+                <motion.div
+                  className="w-full rounded-lg border border-red-200 bg-red-50 p-2"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="flex items-center gap-1">
+                    <div className="h-2 w-2 rounded-full bg-red-500" />
+                    <span className="text-[9px] font-bold text-red-600">Peligroso</span>
+                  </div>
+                  <p className="mt-0.5 text-[9px] text-gray-600">Ibuprofeno + Enalapril</p>
+                </motion.div>
+                {/* Moderate */}
+                <motion.div
+                  className="w-full rounded-lg border border-amber-200 bg-amber-50 p-2"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <div className="flex items-center gap-1">
+                    <div className="h-2 w-2 rounded-full bg-amber-400" />
+                    <span className="text-[9px] font-bold text-amber-600">Precaución</span>
+                  </div>
+                  <p className="mt-0.5 text-[9px] text-gray-600">Ibuprofeno + Metformina</p>
+                </motion.div>
+                {/* Safe */}
+                <motion.div
+                  className="w-full rounded-lg border border-green-200 bg-green-50 p-2"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  <div className="flex items-center gap-1">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <span className="text-[9px] font-bold text-green-600">Sin riesgo</span>
+                  </div>
+                  <p className="mt-0.5 text-[9px] text-gray-600">Enalapril + Metformina</p>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
