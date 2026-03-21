@@ -1,0 +1,1119 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "J5nBz",
+      "x": 0,
+      "y": 0,
+      "name": "Estado Inicial",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FFFFFF",
+      "cornerRadius": 40,
+      "layout": "vertical",
+      "gap": 32,
+      "padding": [
+        62,
+        24,
+        40,
+        24
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Ng81B",
+          "name": "Orb Container",
+          "width": 200,
+          "height": 200,
+          "layout": "none",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "efZ2N",
+              "x": 0,
+              "y": 0,
+              "name": "orbGlow",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "radial",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "width": 1,
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#8B5CF630",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8B5CF600",
+                    "position": 1
+                  }
+                ]
+              },
+              "width": 200,
+              "height": 200
+            },
+            {
+              "type": "ellipse",
+              "id": "pljso",
+              "x": 30,
+              "y": 30,
+              "name": "orbCore",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "radial",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "width": 1,
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#A78BFA",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8B5CF6",
+                    "position": 0.5
+                  },
+                  {
+                    "color": "#6D28D9",
+                    "position": 1
+                  }
+                ]
+              },
+              "width": 140,
+              "height": 140,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#8B5CF640",
+                "blur": 40
+              }
+            },
+            {
+              "type": "ellipse",
+              "id": "3CbUe",
+              "x": 58,
+              "y": 42,
+              "name": "orbHigh",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "radial",
+                "enabled": true,
+                "rotation": 0,
+                "size": {
+                  "width": 1,
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#FFFFFF55",
+                    "position": 0
+                  },
+                  {
+                    "color": "#FFFFFF00",
+                    "position": 1
+                  }
+                ]
+              },
+              "width": 60,
+              "height": 60
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "f9XZu",
+          "name": "Greeting",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "b89O6",
+              "name": "greetTit",
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Hola, Gastón",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "CRfPn",
+              "name": "greetSub",
+              "fill": "#6B7280",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "¿En qué puedo ayudarte hoy?",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "pw57v",
+      "x": 493,
+      "y": 0,
+      "name": "Estado Preconfirmación",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FFFFFF",
+      "cornerRadius": 40,
+      "layout": "vertical",
+      "padding": [
+        62,
+        0,
+        0,
+        0
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "IQWer",
+          "name": "Top Section",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            20,
+            24,
+            16,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "jtoBg",
+              "name": "Orb Small",
+              "width": 100,
+              "height": 100,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "lTKJx",
+                  "x": 0,
+                  "y": 0,
+                  "name": "oG2",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#8B5CF625",
+                        "position": 0
+                      },
+                      {
+                        "color": "#8B5CF600",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 100,
+                  "height": 100
+                },
+                {
+                  "type": "ellipse",
+                  "id": "j3xaG",
+                  "x": 15,
+                  "y": 15,
+                  "name": "oC2 smooth",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#A78BFA",
+                        "position": 0
+                      },
+                      {
+                        "color": "#8B5CF6",
+                        "position": 0.5
+                      },
+                      {
+                        "color": "#6D28D9",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 70,
+                  "height": 70,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#8B5CF633",
+                    "blur": 24
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "2FRwJ",
+                  "x": 27,
+                  "y": 20,
+                  "name": "oH2",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FFFFFF44",
+                        "position": 0
+                      },
+                      {
+                        "color": "#FFFFFF00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 36,
+                  "height": 36
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "fMzue",
+              "name": "oMsg2",
+              "fill": "#6B7280",
+              "content": "Revisando tus medicamentos...",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "500"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "c8n5S",
+          "name": "Med Panel",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#F9FAFB",
+          "cornerRadius": [
+            24,
+            24,
+            0,
+            0
+          ],
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#E5E7EB"
+          },
+          "layout": "vertical",
+          "padding": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "wUR5E",
+              "name": "Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "6GDVm",
+                  "name": "medTit",
+                  "fill": "#1A1A1A",
+                  "content": "Tus medicamentos",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "Ai7D1",
+                  "name": "medCnt",
+                  "fill": "#8B5CF6",
+                  "content": "4 activos",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yXHhL",
+              "name": "Med Items",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "padding": [
+                14,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "F5gZc",
+                  "name": "Med Card 1",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "6WyP1",
+                      "name": "c1i",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "#8B5CF6",
+                      "cornerRadius": 10,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "QY4mF",
+                          "name": "c1ic",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "pill",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ThkuX",
+                      "name": "c1inf",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AFbcA",
+                          "name": "c1n",
+                          "fill": "#1A1A1A",
+                          "content": "Losartán 50mg",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "8lIAG",
+                          "name": "c1d",
+                          "fill": "#6B7280",
+                          "content": "1 comprimido · Mañana",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "Dpzde",
+                      "name": "c1ck",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "circle-check",
+                      "iconFontFamily": "lucide",
+                      "fill": "#22C55E"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cn8RJ",
+                  "name": "Med Card 2",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CL3Kk",
+                      "name": "c2i",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "#8B5CF6",
+                      "cornerRadius": 10,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "NpAWf",
+                          "name": "c2ic",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "pill",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "zF5tZ",
+                      "name": "c2inf",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "o6aTV",
+                          "name": "c2n",
+                          "fill": "#1A1A1A",
+                          "content": "Metformina 850mg",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "7jfxi",
+                          "name": "c2d",
+                          "fill": "#6B7280",
+                          "content": "1 comprimido · Almuerzo",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "5Ua2O",
+                      "name": "c2ck",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "circle-check",
+                      "iconFontFamily": "lucide",
+                      "fill": "#22C55E"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZCFTN",
+                  "name": "Med Card 3",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Nzzan",
+                      "name": "c3i",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "#8B5CF6",
+                      "cornerRadius": 10,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "DHHf2",
+                          "name": "c3ic",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "pill",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8Olup",
+                      "name": "c3inf",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "etyAI",
+                          "name": "c3n",
+                          "fill": "#1A1A1A",
+                          "content": "Atorvastatina 20mg",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "SJ1iQ",
+                          "name": "c3d",
+                          "fill": "#6B7280",
+                          "content": "1 comprimido · Noche",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "GCFRU",
+                      "name": "c3ck",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "circle-check",
+                      "iconFontFamily": "lucide",
+                      "fill": "#22C55E"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y5Xvq",
+                  "name": "Med Card 4",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#E5E7EB"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "7nzVE",
+                      "name": "c4i",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "#8B5CF6",
+                      "cornerRadius": 10,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "uMW04",
+                          "name": "c4ic",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "pill",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TcS40",
+                      "name": "c4inf",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "a4oep",
+                          "name": "c4n",
+                          "fill": "#1A1A1A",
+                          "content": "Omeprazol 20mg",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Rve4i",
+                          "name": "c4d",
+                          "fill": "#6B7280",
+                          "content": "1 cápsula · Mañana",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "pA9pc",
+                      "name": "c4ck",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "circle-check",
+                      "iconFontFamily": "lucide",
+                      "fill": "#22C55E"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "XreVy",
+      "x": 986,
+      "y": 0,
+      "name": "Estado Resultado",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FFFFFF",
+      "cornerRadius": 40,
+      "layout": "vertical",
+      "padding": [
+        62,
+        0,
+        0,
+        0
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "jKgxd",
+          "name": "Top Section",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            20,
+            24,
+            16,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "1BMjW",
+              "name": "Orb Small",
+              "width": 100,
+              "height": 100,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "I7Bgd",
+                  "x": 0,
+                  "y": 0,
+                  "name": "oG3",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#8B5CF625",
+                        "position": 0
+                      },
+                      {
+                        "color": "#8B5CF600",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 100,
+                  "height": 100
+                },
+                {
+                  "type": "ellipse",
+                  "id": "FhKKO",
+                  "x": 15,
+                  "y": 15,
+                  "name": "oC3 smooth",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#A78BFA",
+                        "position": 0
+                      },
+                      {
+                        "color": "#8B5CF6",
+                        "position": 0.5
+                      },
+                      {
+                        "color": "#6D28D9",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 70,
+                  "height": 70,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#8B5CF633",
+                    "blur": 24
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "hjnv5",
+                  "x": 27,
+                  "y": 20,
+                  "name": "oH3",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FFFFFF44",
+                        "position": 0
+                      },
+                      {
+                        "color": "#FFFFFF00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 36,
+                  "height": 36
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ofDPz",
+              "name": "oMsg3",
+              "fill": "#22C55E",
+              "content": "Análisis completo",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "4gTIc",
+          "name": "Results Panel",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#F9FAFB",
+          "cornerRadius": [
+            24,
+            24,
+            0,
+            0
+          ],
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#E5E7EB"
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "TAvRw",
+              "name": "Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "A9g39",
+                  "name": "resTit",
+                  "fill": "#1A1A1A",
+                  "content": "Interacciones",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xwO37",
+              "name": "Semaforo",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fKyr9",
+                  "name": "Peligroso",
+                  "width": "fill_container",
+                  "fill": "#FEF2F2",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "swfYc",
+                      "name": "Label Row",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "emGFg",
+                          "name": "redDot",
+                          "fill": "#EF4444",
+                          "width": 12,
+                          "height": 12
+                        },
+                        {
+                          "type": "text",
+                          "id": "39ulU",
+                          "name": "redLabel",
+                          "fill": "#DC2626",
+                          "content": "Peligroso",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "1jMvZ",
+                      "name": "redTit",
+                      "fill": "#1A1A1A",
+                      "content": "Ibuprofeno + Enalapril",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "RGlup",
+                      "name": "redDesc",
+                      "fill": "#4B5563",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "El ibuprofeno puede reducir el efecto antihipertensivo del enalapril y aumentar el riesgo de daño renal.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 13
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "7xv9d",
+                  "name": "Precaución",
+                  "width": "fill_container",
+                  "fill": "#FFFBEB",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "5AXTu",
+                      "name": "Label Row",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "rInO5",
+                          "name": "yelDot",
+                          "fill": "#F59E0B",
+                          "width": 12,
+                          "height": 12
+                        },
+                        {
+                          "type": "text",
+                          "id": "fD2kR",
+                          "name": "yelLabel",
+                          "fill": "#D97706",
+                          "content": "Precaución",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "h3OSB",
+                      "name": "yelTit",
+                      "fill": "#1A1A1A",
+                      "content": "Ibuprofeno + Metformina",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6zc9R",
+                      "name": "yelDesc",
+                      "fill": "#4B5563",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "El ibuprofeno puede potenciar el efecto hipoglucemiante de la metformina. Monitorear glucemia.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 13
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "agury",
+                  "name": "Sin riesgo",
+                  "width": "fill_container",
+                  "fill": "#F0FDF4",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "6EELW",
+                      "name": "Label Row",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "OLjRE",
+                          "name": "grnDot",
+                          "fill": "#22C55E",
+                          "width": 12,
+                          "height": 12
+                        },
+                        {
+                          "type": "text",
+                          "id": "HYCVL",
+                          "name": "grnLabel",
+                          "fill": "#16A34A",
+                          "content": "Sin riesgo conocido",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "FQtma",
+                      "name": "grnTit",
+                      "fill": "#1A1A1A",
+                      "content": "Enalapril + Metformina",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "lD9si",
+                      "name": "grnDesc",
+                      "fill": "#4B5563",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "No se encontraron interacciones significativas entre estos medicamentos. Combinación segura.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 13
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
