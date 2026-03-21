@@ -2,6 +2,7 @@
 
 import { Pill, CircleCheck } from "lucide-react";
 import { Orb } from "./Orb";
+import { TTSButton } from "./TTSButton";
 
 const MOCK_MEDICATIONS = ["Losartán", "Metformina", "Atorvastatina", "Omeprazol"];
 
@@ -39,6 +40,11 @@ export function MedicationsView() {
             {MOCK_MEDICATIONS.length} encontrados
           </span>
         </div>
+
+        <TTSButton
+          text={`Se detectaron ${MOCK_MEDICATIONS.length} medicamentos: ${MOCK_MEDICATIONS.join(", ")}.`}
+          className="mt-2 self-start"
+        />
 
         {/* List */}
         <div className="mt-3.5 flex flex-col gap-2.5">

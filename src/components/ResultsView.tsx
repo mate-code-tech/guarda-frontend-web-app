@@ -1,6 +1,7 @@
 "use client";
 
 import { Orb } from "./Orb";
+import { TTSButton } from "./TTSButton";
 
 type Severity = "severe" | "moderate" | "safe";
 
@@ -97,6 +98,13 @@ export function ResultsView() {
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-gray-900">Interacciones</h2>
         </div>
+
+        <TTSButton
+          text={MOCK_RESULTS.map(
+            (r) => `${r.label}: ${r.title}. ${r.description}`
+          ).join(" ")}
+          className="mt-2 self-start"
+        />
 
         {/* Results */}
         <div className="mt-3 flex flex-col gap-3">
