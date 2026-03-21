@@ -1,14 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { GreetingView } from "@/components/GreetingView";
 import { MedicationsView } from "@/components/MedicationsView";
 import { ResultsView } from "@/components/ResultsView";
 
 type AppState = "greeting" | "medications" | "results";
 
+const GUEST_ID_KEY = "guarda_guest_id";
+
 export default function Home() {
   const [state, setState] = useState<AppState>("greeting");
+  const [guestId, setGuestId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(GUEST_ID_KEY);
+    if (stored) {
+      setGuestId(stored);
+    } else {
+      const id = uuidv4();
+      localStorage.setItem(GUEST_ID_KEY, id);
+      setGuestId(id);
+    }
+  }, []);
 
   return (
     <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-white pt-[62px]">
