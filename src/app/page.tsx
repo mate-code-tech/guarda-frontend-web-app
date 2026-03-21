@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { GreetingView } from "@/components/GreetingView";
 import { MedicationsView } from "@/components/MedicationsView";
 import { ResultsView } from "@/components/ResultsView";
-import { createGuest } from "@/lib/api";
+import { createGuest, sendMessage } from "@/lib/api";
 
 const GUEST_ID_KEY = "guarda_guest_id";
 
@@ -14,12 +14,23 @@ export default function Home() {
   const [state, setState] = useState<AppState>("greeting");
 
   useEffect(() => {
-    const existing = localStorage.getItem(GUEST_ID_KEY);
-    if (existing) return;
+    async function initGuest() {
+      let guestId = localStorage.getItem(GUEST_ID_KEY);
 
-    createGuest().then((guest) => {
-      localStorage.setItem(GUEST_ID_KEY, guest.id);
-    });
+      if (!guestId) {
+        const guest = await createGuest();
+        localStorage.setItem(GUEST_ID_KEY, guest.id);
+        guestId = guest.id;
+      }
+
+      const response = await sendMessage({
+        conversation_id: null,
+        message: "Holaaa",
+      });
+      console.log("chat/message response:", response);
+    }
+
+    initGuest();
   }, []);
 
   return (
