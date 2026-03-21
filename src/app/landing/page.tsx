@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -17,7 +18,6 @@ import {
   Stethoscope,
   HandHeart,
 } from "lucide-react";
-import { Orb } from "@/components/Orb";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -117,17 +117,15 @@ function scrollTo(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
 
 /* ---- Animated phone mockup simulating app flow ---- */
 
-import type { OrbState } from "@/components/Orb";
-
 type MockStep = "greeting" | "listening" | "thinking" | "medications" | "results";
 
-const MOCK_FLOW: { step: MockStep; orbState: OrbState; duration: number }[] = [
-  { step: "greeting", orbState: "speaking", duration: 3000 },
-  { step: "listening", orbState: "listening", duration: 3500 },
-  { step: "thinking", orbState: "thinking", duration: 2000 },
-  { step: "medications", orbState: "speaking", duration: 3000 },
-  { step: "thinking", orbState: "thinking", duration: 1500 },
-  { step: "results", orbState: "idle", duration: 4000 },
+const MOCK_FLOW: { step: MockStep; duration: number }[] = [
+  { step: "greeting", duration: 3000 },
+  { step: "listening", duration: 3500 },
+  { step: "thinking", duration: 2000 },
+  { step: "medications", duration: 3000 },
+  { step: "thinking", duration: 1500 },
+  { step: "results", duration: 4000 },
 ];
 
 const screenTransition = {
@@ -162,7 +160,7 @@ function PhoneMockup() {
                 className="flex flex-1 flex-col items-center justify-center gap-4"
                 {...screenTransition}
               >
-                <Orb size="small" state={current.orbState} />
+                <Image src="/orb.svg" alt="Guarda orb" width={80} height={80} className="shrink-0" />
                 <p className="text-center text-[11px] text-gray-500">
                   Hola, contame qué medicamentos tomás.
                 </p>
@@ -176,7 +174,7 @@ function PhoneMockup() {
                 className="flex flex-1 flex-col items-center justify-center gap-4"
                 {...screenTransition}
               >
-                <Orb size="small" state={current.orbState} />
+                <Image src="/orb.svg" alt="Guarda orb" width={80} height={80} className="shrink-0" />
                 <p className="text-center text-[10px] font-medium text-purple-400">
                   Escuchando...
                 </p>
@@ -198,7 +196,7 @@ function PhoneMockup() {
                 className="flex flex-1 flex-col items-center justify-center gap-4"
                 {...screenTransition}
               >
-                <Orb size="small" state={current.orbState} />
+                <Image src="/orb.svg" alt="Guarda orb" width={80} height={80} className="shrink-0" />
                 <div className="flex items-center gap-1.5">
                   <motion.div
                     className="h-1.5 w-1.5 rounded-full bg-purple-400"
@@ -227,7 +225,7 @@ function PhoneMockup() {
                 className="flex w-full flex-1 flex-col items-center gap-3 pt-2"
                 {...screenTransition}
               >
-                <Orb size="small" state={current.orbState} />
+                <Image src="/orb.svg" alt="Guarda orb" width={80} height={80} className="shrink-0" />
                 <p className="text-center text-[10px] text-gray-500">
                   Encontré tus medicamentos
                 </p>
@@ -266,7 +264,7 @@ function PhoneMockup() {
                 className="flex w-full flex-1 flex-col items-center gap-3 pt-2"
                 {...screenTransition}
               >
-                <Orb size="small" state={current.orbState} />
+                <Image src="/orb.svg" alt="Guarda orb" width={80} height={80} className="shrink-0" />
                 <motion.p
                   className="text-[10px] font-semibold text-green-500"
                   initial={{ opacity: 0 }}
@@ -403,8 +401,9 @@ export default function LandingPage() {
           <a
             href="#"
             onClick={(e) => scrollTo(e, "#")}
-            className="text-lg font-bold text-purple-600"
+            className="flex items-center gap-2 text-lg font-bold text-purple-600"
           >
+            <Image src="/orb.svg" alt="" width={28} height={28} />
             Guarda
           </a>
           <nav className="hidden items-center gap-6 md:flex">
