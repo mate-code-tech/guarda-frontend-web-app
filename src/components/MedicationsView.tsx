@@ -1,10 +1,14 @@
 "use client";
 
 import { Pill, CircleCheck } from "lucide-react";
-import { Orb } from "./Orb";
-import { TTSButton } from "./TTSButton";
+import { Orb, OrbState } from "./Orb";
+import type { Medication } from "@/lib/api";
 
-const MOCK_MEDICATIONS = ["Losartán", "Metformina", "Atorvastatina", "Omeprazol"];
+interface MedicationsViewProps {
+  medications: Medication[];
+  orbState: OrbState;
+  assistantMessage: string;
+}
 
 function MedCard({ name }: { name: string }) {
   return (
@@ -12,44 +16,43 @@ function MedCard({ name }: { name: string }) {
       <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] bg-purple-500">
         <Pill className="h-[18px] w-[18px] text-white" />
       </div>
-      <span className="min-w-0 flex-1 text-sm font-semibold text-gray-900">{name}</span>
+      <span className="min-w-0 flex-1 text-sm font-semibold text-gray-900">
+        {name}
+      </span>
       <CircleCheck className="h-5 w-5 shrink-0 text-green-500" />
     </div>
   );
 }
 
-export function MedicationsView() {
+export function MedicationsView({
+  medications,
+  orbState,
+  assistantMessage,
+}: MedicationsViewProps) {
   return (
     <div className="flex flex-1 flex-col">
       {/* Top: orb + message */}
       <div className="flex flex-col items-center gap-3 px-6 pb-4 pt-5">
-        <Orb size="small" />
+        <Orb size="small" state={orbState} />
         <p className="text-center text-[13px] font-medium text-gray-500">
-          Revisando tus medicamentos...
+          {assistantMessage || "Revisando tus medicamentos..."}
         </p>
       </div>
 
       {/* Panel */}
       <div className="flex flex-1 flex-col rounded-t-3xl border border-gray-200 bg-gray-50 p-5">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-gray-900">
             Medicamentos detectados
           </h2>
           <span className="text-xs font-semibold text-purple-500">
-            {MOCK_MEDICATIONS.length} encontrados
+            {medications.length} encontrados
           </span>
         </div>
 
-        <TTSButton
-          text={`Se detectaron ${MOCK_MEDICATIONS.length} medicamentos: ${MOCK_MEDICATIONS.join(", ")}.`}
-          className="mt-2 self-start"
-        />
-
-        {/* List */}
         <div className="mt-3.5 flex flex-col gap-2.5">
-          {MOCK_MEDICATIONS.map((name) => (
-            <MedCard key={name} name={name} />
+          {medications.map((med) => (
+            <MedCard key={med.generic_name} name={med.input_name} />
           ))}
         </div>
       </div>

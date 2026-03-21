@@ -21,44 +21,49 @@ export function useTTS() {
     setStatus("idle");
   }, []);
 
+  /** Speaks the text and resolves when audio finishes playing */
   const speak = useCallback(
-    async (text: string) => {
+    (text: string): Promise<void> => {
       stop();
       setStatus("loading");
 
-      try {
-        const res = await fetch("/api/tts", {
+      return new Promise((resolve, reject) => {
+        fetch("/api/tts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text }),
-        });
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error(`TTS request failed: ${res.status}`);
+            return res.blob();
+          })
+          .then((blob) => {
+            const url = URL.createObjectURL(blob);
+            urlRef.current = url;
 
-        if (!res.ok) {
-          throw new Error(`TTS request failed: ${res.status}`);
-        }
+            const audio = new Audio(url);
+            audioRef.current = audio;
 
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        urlRef.current = url;
+            audio.addEventListener("ended", () => {
+              setStatus("idle");
+              URL.revokeObjectURL(url);
+              urlRef.current = null;
+              resolve();
+            });
 
-        const audio = new Audio(url);
-        audioRef.current = audio;
+            audio.addEventListener("error", () => {
+              setStatus("error");
+              reject(new Error("Audio playback error"));
+            });
 
-        audio.addEventListener("ended", () => {
-          setStatus("idle");
-          URL.revokeObjectURL(url);
-          urlRef.current = null;
-        });
-
-        audio.addEventListener("error", () => {
-          setStatus("error");
-        });
-
-        setStatus("playing");
-        await audio.play();
-      } catch {
-        setStatus("error");
-      }
+            setStatus("playing");
+            audio.play().catch(reject);
+          })
+          .catch((err) => {
+            setStatus("error");
+            reject(err);
+          });
+      });
     },
     [stop]
   );
