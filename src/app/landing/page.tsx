@@ -2,7 +2,20 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShieldCheck, Mic, Database, Brain, Heart, ArrowRight } from "lucide-react";
+import {
+  ShieldCheck,
+  Mic,
+  Database,
+  Brain,
+  Heart,
+  ArrowRight,
+  Pill,
+  CircleCheck,
+  MessageCircle,
+  Users,
+  Stethoscope,
+  HandHeart,
+} from "lucide-react";
 import { Orb } from "@/components/Orb";
 
 const fadeUp = {
@@ -17,18 +30,21 @@ const fadeUp = {
 const STEPS = [
   {
     number: "01",
+    icon: MessageCircle,
     title: "Hablá con Guarda",
     description:
       "Decile qué medicamentos tomás usando tu voz. Sin formularios, sin escribir.",
   },
   {
     number: "02",
+    icon: Database,
     title: "Analizamos tus medicamentos",
     description:
       "Comparamos cada combinación contra bases de datos oficiales y validamos con inteligencia artificial.",
   },
   {
     number: "03",
+    icon: ShieldCheck,
     title: "Recibí tu análisis",
     description:
       "Te mostramos las interacciones detectadas con nivel de riesgo y recomendaciones claras.",
@@ -38,15 +54,15 @@ const STEPS = [
 const FEATURES = [
   {
     icon: Database,
-    title: "Datos oficiales",
+    title: "Datos oficiales + IA",
     description:
-      "Cruzamos información con bases de datos farmacológicas reconocidas. No es solo IA generativa.",
+      "Cruzamos bases de datos farmacológicas oficiales con inteligencia artificial. Ambas trabajan juntas para darte el análisis más completo.",
   },
   {
     icon: Brain,
-    title: "IA como respaldo",
+    title: "Doble verificación",
     description:
-      "Cuando no hay datos oficiales, la inteligencia artificial complementa el análisis. Siempre sabés la fuente.",
+      "La IA enriquece los datos oficiales con contexto y recomendaciones específicas para cada combinación.",
   },
   {
     icon: Mic,
@@ -59,6 +75,24 @@ const FEATURES = [
     title: "Privado y seguro",
     description:
       "No almacenamos datos personales. Tu consulta es anónima y se procesa en tiempo real.",
+  },
+];
+
+const AUDIENCE = [
+  {
+    icon: Users,
+    label: "Personas mayores",
+    description: "Que toman varios medicamentos a diario",
+  },
+  {
+    icon: HandHeart,
+    label: "Cuidadores",
+    description: "Que administran medicación de otros",
+  },
+  {
+    icon: Stethoscope,
+    label: "Cualquier persona",
+    description: "Con dudas sobre combinaciones",
   },
 ];
 
@@ -78,6 +112,126 @@ function scrollTo(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
   } else if (href === "#") {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+}
+
+/* ---- Phone mockup showing the app UI ---- */
+function PhoneMockup() {
+  return (
+    <div className="relative mx-auto w-[260px] md:w-[280px]">
+      {/* Phone frame */}
+      <div className="rounded-[36px] border-[6px] border-gray-900 bg-white p-3 shadow-2xl shadow-purple-200/40">
+        {/* Notch */}
+        <div className="mx-auto mb-3 h-[6px] w-20 rounded-full bg-gray-900" />
+        {/* Screen content */}
+        <div className="flex flex-col items-center gap-4 rounded-[24px] bg-white px-4 pb-5 pt-6">
+          <Orb size="small" state="speaking" />
+          <p className="text-center text-[11px] text-gray-500">
+            Veo que mencionás ibuprofeno y enalapril...
+          </p>
+          {/* Mini medication cards */}
+          <div className="flex w-full flex-col gap-1.5">
+            {["Ibuprofeno", "Enalapril", "Metformina"].map((med) => (
+              <div
+                key={med}
+                className="flex items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-500">
+                  <Pill className="h-2.5 w-2.5 text-white" />
+                </div>
+                <span className="flex-1 text-[10px] font-semibold text-gray-800">
+                  {med}
+                </span>
+                <CircleCheck className="h-3 w-3 text-green-500" />
+              </div>
+            ))}
+          </div>
+          {/* Mini result card */}
+          <div className="w-full rounded-lg border border-red-200 bg-red-50 p-2">
+            <div className="flex items-center gap-1">
+              <div className="h-2 w-2 rounded-full bg-red-500" />
+              <span className="text-[9px] font-bold text-red-600">
+                Peligroso
+              </span>
+            </div>
+            <p className="mt-0.5 text-[9px] text-gray-600">
+              Ibuprofeno + Enalapril
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---- Comparison card (Guarda vs ChatGPT) ---- */
+function ComparisonVisual() {
+  return (
+    <div className="mt-8 grid w-full max-w-2xl gap-4 md:grid-cols-2">
+      {/* ChatGPT side */}
+      <motion.div
+        className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={0}
+      >
+        <span className="text-xs font-bold text-gray-400">Chatbot genérico</span>
+        <div className="flex flex-col gap-2">
+          <div className="rounded-lg bg-gray-100 px-3 py-2">
+            <p className="text-[11px] text-gray-500">
+              &quot;Podría haber una interacción entre estos medicamentos. Te
+              recomiendo consultar a tu médico.&quot;
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-gray-300" />
+            <span className="text-[10px] text-gray-400">Sin fuente</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-gray-300" />
+            <span className="text-[10px] text-gray-400">Puede inventar datos</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-gray-300" />
+            <span className="text-[10px] text-gray-400">Respuesta genérica</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Guarda side */}
+      <motion.div
+        className="flex flex-col gap-3 rounded-2xl border-2 border-purple-200 bg-purple-50 p-5"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        custom={1}
+      >
+        <span className="text-xs font-bold text-purple-600">Guarda</span>
+        <div className="flex flex-col gap-2">
+          <div className="rounded-lg bg-white px-3 py-2">
+            <p className="text-[11px] text-gray-700">
+              &quot;Ibuprofeno + Enalapril: riesgo alto. Puede reducir el efecto
+              antihipertensivo y dañar los riñones.&quot;
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CircleCheck className="h-3 w-3 text-green-500" />
+            <span className="text-[10px] text-gray-600">Datos oficiales + IA</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CircleCheck className="h-3 w-3 text-green-500" />
+            <span className="text-[10px] text-gray-600">Nivel de riesgo claro</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CircleCheck className="h-3 w-3 text-green-500" />
+            <span className="text-[10px] text-gray-600">Recomendación específica</span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
 export default function LandingPage() {
@@ -115,56 +269,71 @@ export default function LandingPage() {
       </header>
 
       {/* ========== HERO ========== */}
-      <section id="hero" className="flex w-full max-w-5xl flex-col items-center gap-8 px-6 pb-16 pt-20 text-center md:pt-28">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Orb size="large" state="idle" />
-        </motion.div>
+      <section
+        id="hero"
+        className="relative flex w-full max-w-5xl flex-col items-center gap-10 px-6 pb-20 pt-20 md:flex-row md:gap-16 md:pt-28"
+      >
+        {/* Decorative blobs */}
+        <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-purple-200 opacity-20 blur-[100px]" />
+        <div className="pointer-events-none absolute -right-20 bottom-0 h-56 w-56 rounded-full bg-violet-300 opacity-15 blur-[80px]" />
 
-        <motion.h1
-          className="max-w-2xl text-4xl font-bold leading-tight text-gray-900 md:text-5xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          Verificá las interacciones entre tus medicamentos
-        </motion.h1>
-
-        <motion.p
-          className="max-w-xl text-lg text-gray-500"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.5 }}
-        >
-          Guarda cruza tus medicamentos con{" "}
-          <span className="font-semibold text-purple-600">
-            bases de datos oficiales
-          </span>{" "}
-          y los valida con inteligencia artificial. Más confiable que preguntarle
-          a un chatbot genérico.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-purple-200 transition-all hover:bg-purple-700 hover:shadow-purple-300"
+        {/* Text */}
+        <div className="relative z-10 flex flex-1 flex-col items-center gap-6 text-center md:items-start md:text-left">
+          <motion.h1
+            className="max-w-lg text-4xl font-bold leading-tight text-gray-900 md:text-5xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
           >
-            Probar Guarda
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+            Verificá las interacciones entre tus medicamentos
+          </motion.h1>
+
+          <motion.p
+            className="max-w-md text-lg text-gray-500"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            Guarda combina{" "}
+            <span className="font-semibold text-purple-600">
+              bases de datos oficiales
+            </span>{" "}
+            con inteligencia artificial para analizar tus medicamentos. Más
+            confiable que preguntarle a un chatbot genérico.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45, duration: 0.5 }}
+          >
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-purple-200 transition-all hover:bg-purple-700 hover:shadow-purple-300"
+            >
+              Probar Guarda
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* Phone mockup */}
+        <motion.div
+          className="relative z-10 flex-shrink-0"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
+          <PhoneMockup />
         </motion.div>
       </section>
 
       {/* ========== DIFERENCIADOR ========== */}
-      <section id="diferenciador" className="w-full scroll-mt-16 bg-purple-50 py-14">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 text-center">
+      <section
+        id="diferenciador"
+        className="w-full scroll-mt-16 bg-purple-50 py-16"
+      >
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 text-center">
           <span className="rounded-full bg-purple-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-purple-600">
             No es un chatbot cualquiera
           </span>
@@ -172,18 +341,20 @@ export default function LandingPage() {
             Datos reales, no respuestas inventadas
           </h2>
           <p className="max-w-xl text-base text-gray-500">
-            A diferencia de herramientas genéricas como ChatGPT, Guarda compara
-            tus medicamentos contra entidades farmacológicas oficiales. La IA
-            solo interviene cuando no existen datos registrados, y siempre te
-            indicamos la fuente de cada resultado.
+            A diferencia de herramientas genéricas, Guarda combina bases de
+            datos farmacológicas oficiales con inteligencia artificial. Ambas
+            trabajan juntas para darte resultados confiables y recomendaciones
+            claras.
           </p>
+          <ComparisonVisual />
         </div>
       </section>
 
       {/* ========== CÓMO FUNCIONA ========== */}
-      <section id="como-funciona" className="w-full scroll-mt-16 py-16">
+      <section id="como-funciona" className="relative w-full scroll-mt-16 py-20">
+        <div className="pointer-events-none absolute right-0 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-purple-100 opacity-30 blur-[80px]" />
         <div className="mx-auto max-w-4xl px-6">
-          <h2 className="mb-10 text-center text-2xl font-bold text-gray-900 md:text-3xl">
+          <h2 className="mb-12 text-center text-2xl font-bold text-gray-900 md:text-3xl">
             Cómo funciona
           </h2>
 
@@ -191,14 +362,17 @@ export default function LandingPage() {
             {STEPS.map((step, i) => (
               <motion.div
                 key={step.number}
-                className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+                className="relative flex flex-col items-center gap-4 rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm"
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-40px" }}
                 custom={i}
               >
-                <span className="text-3xl font-bold text-purple-200">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100">
+                  <step.icon className="h-7 w-7 text-purple-600" />
+                </div>
+                <span className="absolute right-4 top-4 text-2xl font-bold text-purple-100">
                   {step.number}
                 </span>
                 <h3 className="text-lg font-bold text-gray-900">
@@ -214,9 +388,12 @@ export default function LandingPage() {
       </section>
 
       {/* ========== FEATURES ========== */}
-      <section id="features" className="w-full scroll-mt-16 bg-gray-50 py-16">
+      <section
+        id="features"
+        className="w-full scroll-mt-16 bg-gray-50 py-20"
+      >
         <div className="mx-auto max-w-4xl px-6">
-          <h2 className="mb-10 text-center text-2xl font-bold text-gray-900 md:text-3xl">
+          <h2 className="mb-12 text-center text-2xl font-bold text-gray-900 md:text-3xl">
             Por qué elegir Guarda
           </h2>
 
@@ -224,21 +401,21 @@ export default function LandingPage() {
             {FEATURES.map((feature, i) => (
               <motion.div
                 key={feature.title}
-                className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-5"
+                className="group flex gap-4 rounded-2xl border border-gray-100 bg-white p-6 transition-shadow hover:shadow-md"
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-40px" }}
                 custom={i}
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100">
-                  <feature.icon className="h-5 w-5 text-purple-600" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-100 transition-colors group-hover:bg-purple-200">
+                  <feature.icon className="h-6 w-6 text-purple-600" />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <h3 className="text-sm font-bold text-gray-900">
+                <div className="flex flex-col gap-1.5">
+                  <h3 className="text-base font-bold text-gray-900">
                     {feature.title}
                   </h3>
-                  <p className="text-[13px] leading-relaxed text-gray-500">
+                  <p className="text-sm leading-relaxed text-gray-500">
                     {feature.description}
                   </p>
                 </div>
@@ -249,18 +426,42 @@ export default function LandingPage() {
       </section>
 
       {/* ========== PARA QUIÉN ========== */}
-      <section id="para-quien" className="w-full scroll-mt-16 py-16">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
-          <Heart className="h-10 w-10 text-purple-400" />
-          <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-            Pensado para quienes más lo necesitan
-          </h2>
-          <p className="max-w-xl text-base text-gray-500">
-            Guarda nació para ayudar a personas mayores que toman varios
-            medicamentos y necesitan saber si son compatibles. Pero cualquier
-            persona puede usarlo: cuidadores, familiares, o vos mismo cuando
-            tenés dudas sobre una combinación.
-          </p>
+      <section id="para-quien" className="relative w-full scroll-mt-16 py-20">
+        <div className="pointer-events-none absolute left-0 top-0 h-48 w-48 rounded-full bg-pink-100 opacity-25 blur-[80px]" />
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 px-6">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <Heart className="h-10 w-10 text-purple-400" />
+            <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
+              Pensado para quienes más lo necesitan
+            </h2>
+            <p className="max-w-xl text-base text-gray-500">
+              Guarda nació para ayudar a personas mayores que toman varios
+              medicamentos. Pero cualquier persona puede usarlo.
+            </p>
+          </div>
+
+          <div className="grid w-full max-w-2xl gap-4 md:grid-cols-3">
+            {AUDIENCE.map((item, i) => (
+              <motion.div
+                key={item.label}
+                className="flex flex-col items-center gap-3 rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm"
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={i}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
+                  <item.icon className="h-6 w-6 text-purple-600" />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900">
+                  {item.label}
+                </h3>
+                <p className="text-xs text-gray-500">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
           <p className="text-sm font-medium text-purple-500">
             Una herramienta para toda la sociedad.
           </p>
@@ -268,8 +469,10 @@ export default function LandingPage() {
       </section>
 
       {/* ========== CTA FINAL ========== */}
-      <section className="w-full bg-purple-600 py-14">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
+      <section className="relative w-full overflow-hidden bg-purple-600 py-16">
+        <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-purple-500 opacity-40 blur-[80px]" />
+        <div className="pointer-events-none absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-violet-400 opacity-30 blur-[60px]" />
+        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
           <h2 className="text-2xl font-bold text-white md:text-3xl">
             Probá Guarda ahora
           </h2>
