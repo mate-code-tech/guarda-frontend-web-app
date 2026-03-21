@@ -169,6 +169,8 @@ async function mockCheckInteractions(): Promise<CheckInteractionsResponse> {
       {
         drug_a: "ibuprofen",
         drug_b: "enalapril",
+        input_name_a: "ibuprofeno",
+        input_name_b: "enalapril",
         severity: "severe",
         description:
           "El ibuprofeno puede reducir el efecto antihipertensivo del enalapril y aumentar el riesgo de daño renal.",
@@ -178,6 +180,8 @@ async function mockCheckInteractions(): Promise<CheckInteractionsResponse> {
       {
         drug_a: "ibuprofen",
         drug_b: "metformin",
+        input_name_a: "ibuprofeno",
+        input_name_b: "metformina",
         severity: "moderate",
         description:
           "El ibuprofeno puede potenciar el efecto hipoglucemiante de la metformina. Monitorear glucemia.",
@@ -187,6 +191,8 @@ async function mockCheckInteractions(): Promise<CheckInteractionsResponse> {
       {
         drug_a: "enalapril",
         drug_b: "metformin",
+        input_name_a: "enalapril",
+        input_name_b: "metformina",
         severity: "none",
         description:
           "No se encontraron interacciones significativas entre estos medicamentos.",
