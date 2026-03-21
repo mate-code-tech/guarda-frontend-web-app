@@ -77,7 +77,7 @@ function ResultCard({ result, index }: { result: InteractionResult; index: numbe
         </span>
       </div>
       <h3 className="text-base font-bold text-gray-900">
-        {result.drug_a} + {result.drug_b}
+        {result.input_name_a || result.drug_a} + {result.input_name_b || result.drug_b}
       </h3>
       <p className="text-[13px] leading-[1.4] text-gray-600">
         {result.description}
