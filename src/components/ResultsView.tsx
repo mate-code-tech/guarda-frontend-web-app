@@ -135,13 +135,13 @@ function ProfileWarningCard({ warning, index, offset }: { warning: ProfileWarnin
 export function ResultsView({ results, profileWarnings = [] }: ResultsViewProps) {
   return (
     <motion.div
-      className="flex flex-1 flex-col"
+      className="flex min-h-0 flex-1 flex-col"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
       {/* Top: orb + status */}
-      <div className="flex flex-col items-center gap-3 px-6 pb-4 pt-5">
+      <div className="shrink-0 flex flex-col items-center gap-3 px-6 pb-4 pt-5">
         <Orb size="small" state="idle" />
         <motion.p
           className="text-center text-[13px] font-semibold text-green-500"
@@ -155,7 +155,7 @@ export function ResultsView({ results, profileWarnings = [] }: ResultsViewProps)
 
       {/* Panel */}
       <motion.div
-        className="flex flex-1 flex-col overflow-y-auto rounded-t-3xl border border-gray-200 bg-gray-50 p-5"
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain rounded-t-3xl border border-gray-200 bg-gray-50 p-5 pb-10"
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45, ease: "easeOut", delay: 0.1 }}

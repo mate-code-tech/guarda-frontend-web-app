@@ -53,6 +53,8 @@ export interface Medication {
 export interface InteractionResult {
   drug_a: string;
   drug_b: string;
+  input_name_a: string;
+  input_name_b: string;
   severity: "none" | "mild" | "moderate" | "severe";
   description: string;
   recommendation: string;

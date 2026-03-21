@@ -282,6 +282,7 @@ export default function Home() {
     <div className="relative flex h-dvh w-full max-w-[393px] flex-col">
       <SiriBorder active={orbState === "listening" && userTranscript.length > 0} />
       <div className="relative flex flex-1 flex-col overflow-hidden rounded-[40px] bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px]">
+      <div className="flex min-h-0 flex-1 flex-col">
       <AnimatePresence mode="wait">
         {view === "greeting" && (
           <motion.div
@@ -318,7 +319,7 @@ export default function Home() {
         {view === "results" && (
           <motion.div
             key="results"
-            className="flex flex-1 flex-col"
+            className="flex min-h-0 flex-1 flex-col"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
@@ -328,6 +329,7 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
       </div>
     </div>
   );
