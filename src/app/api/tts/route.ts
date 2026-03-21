@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"; // Adam (free)
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL"; // Adam (free)
 const MODEL_ID = process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2";
 
 export async function POST(req: NextRequest) {
