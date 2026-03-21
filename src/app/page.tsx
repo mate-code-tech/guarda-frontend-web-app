@@ -43,7 +43,7 @@ export default function Home() {
   const initDoneRef = useRef(false);
   const sttSupportedRef = useRef(false);
 
-  const { speak, stop: stopTTS, unlock: unlockAudio } = useTTS();
+  const { speak, stop: stopTTS } = useTTS();
 
   // --- Handle backend response: TTS + tool-calls ---
   const handleResponse = useCallback(
@@ -208,11 +208,7 @@ export default function Home() {
     initDoneRef.current = true;
     setStarted(true);
 
-    // Unlock audio playback on iOS (must happen during user gesture)
-    unlockAudio();
-
     // Request mic permission in background — don't block the flow.
-    // If it fails, STT will request again when needed.
     requestPermission().catch(() => {});
 
     let guestId = localStorage.getItem(GUEST_ID_KEY);
@@ -237,7 +233,7 @@ export default function Home() {
       setOrbState("idle");
       isProcessingRef.current = false;
     }
-  }, [handleResponse, requestPermission, unlockAudio]);
+  }, [handleResponse, requestPermission]);
 
   // Hydration-safe mount flag
   useEffect(() => {
@@ -309,7 +305,7 @@ export default function Home() {
               orbState={orbState}
               assistantMessage={assistantMessage}
               transcript={userTranscript}
-              showTextInput={!sttSupported}
+              showTextInput
               textInput={textInput}
               onTextInputChange={setTextInput}
               onTextInputSubmit={() => {

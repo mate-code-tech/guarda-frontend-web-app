@@ -4,112 +4,90 @@ import { useState, useRef, useCallback } from "react";
 
 type TTSStatus = "idle" | "loading" | "playing" | "error";
 
-// Tiny silent WAV to "unlock" the Audio element on iOS with a user gesture.
-const SILENCE =
-  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+/** Fallback: use browser's native speechSynthesis (works on iOS without gesture) */
+function speakNative(text: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (!("speechSynthesis" in window)) {
+      resolve();
+      return;
+    }
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-AR";
+    utterance.rate = 1.05;
+    utterance.onend = () => resolve();
+    utterance.onerror = () => resolve(); // Don't block on error
+    window.speechSynthesis.speak(utterance);
+  });
+}
 
 export function useTTS() {
   const [status, setStatus] = useState<TTSStatus>("idle");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const urlRef = useRef<string | null>(null);
-  const unlockedRef = useRef(false);
-
-  // Get or create the shared Audio element.
-  // Must be reused — iOS kills playback if you create new Audio() after the first gesture.
-  const getAudio = useCallback(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-    }
-    return audioRef.current;
-  }, []);
-
-  // Call this once from a user gesture (tap) to unlock audio playback on iOS.
-  const unlock = useCallback(() => {
-    if (unlockedRef.current) return;
-    const audio = getAudio();
-    audio.src = SILENCE;
-    audio.play().then(() => {
-      unlockedRef.current = true;
-    }).catch(() => {
-      // Ignore — will retry on next gesture
-    });
-  }, [getAudio]);
 
   const stop = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      // Do NOT set src="" — that destroys the unlocked state on iOS.
-      // Just reset currentTime so it's ready for next play.
-      audio.currentTime = 0;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
     if (urlRef.current) {
       URL.revokeObjectURL(urlRef.current);
       urlRef.current = null;
     }
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     setStatus("idle");
   }, []);
 
-  /** Speaks the text and resolves when audio finishes playing */
   const speak = useCallback(
-    (text: string): Promise<void> => {
+    async (text: string): Promise<void> => {
       stop();
       setStatus("loading");
 
-      return new Promise((resolve, reject) => {
-        fetch("/api/tts", {
+      try {
+        // Try ElevenLabs first
+        const res = await fetch("/api/tts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text }),
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error(`TTS request failed: ${res.status}`);
-            return res.blob();
-          })
-          .then((blob) => {
-            if (urlRef.current) {
-              URL.revokeObjectURL(urlRef.current);
-            }
+        });
 
-            const url = URL.createObjectURL(blob);
-            urlRef.current = url;
+        if (!res.ok) throw new Error(`TTS ${res.status}`);
 
-            const audio = getAudio();
+        const blob = await res.blob();
+        if (urlRef.current) URL.revokeObjectURL(urlRef.current);
 
-            const onEnded = () => {
-              audio.removeEventListener("ended", onEnded);
-              audio.removeEventListener("error", onError);
-              setStatus("idle");
-              resolve();
-            };
+        const url = URL.createObjectURL(blob);
+        urlRef.current = url;
 
-            const onError = () => {
-              audio.removeEventListener("ended", onEnded);
-              audio.removeEventListener("error", onError);
-              setStatus("error");
-              reject(new Error("Audio playback error"));
-            };
+        // Try to play the audio
+        await new Promise<void>((resolve, reject) => {
+          const audio = new Audio(url);
+          audioRef.current = audio;
 
-            audio.addEventListener("ended", onEnded);
-            audio.addEventListener("error", onError);
+          audio.onended = () => {
+            setStatus("idle");
+            resolve();
+          };
+          audio.onerror = () => reject(new Error("playback failed"));
 
-            audio.src = url;
-            setStatus("playing");
-            audio.play().catch((err) => {
-              audio.removeEventListener("ended", onEnded);
-              audio.removeEventListener("error", onError);
-              setStatus("error");
-              reject(err);
-            });
-          })
-          .catch((err) => {
-            setStatus("error");
-            reject(err);
-          });
-      });
+          setStatus("playing");
+          audio.play().catch(reject);
+        });
+      } catch {
+        // ElevenLabs or audio.play() failed → fallback to native TTS
+        console.warn("ElevenLabs TTS failed, using native speechSynthesis");
+        setStatus("playing");
+        await speakNative(text);
+        setStatus("idle");
+      }
     },
-    [stop, getAudio]
+    [stop]
   );
 
-  return { speak, stop, unlock, status };
+  return { speak, stop, status };
 }
