@@ -305,7 +305,7 @@ export default function Home() {
               orbState={orbState}
               assistantMessage={assistantMessage}
               transcript={userTranscript}
-              showTextInput
+              showTextInput={!sttSupportedRef.current}
               textInput={textInput}
               onTextInputChange={setTextInput}
               onTextInputSubmit={() => {

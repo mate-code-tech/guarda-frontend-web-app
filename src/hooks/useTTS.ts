@@ -4,6 +4,11 @@ import { useState, useRef, useCallback } from "react";
 
 type TTSStatus = "idle" | "loading" | "playing" | "error";
 
+function isMobile(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
 /** Fallback: use browser's native speechSynthesis (works on iOS without gesture) */
 function speakNative(text: string): Promise<void> {
   return new Promise((resolve) => {
@@ -11,14 +16,13 @@ function speakNative(text: string): Promise<void> {
       resolve();
       return;
     }
-    // Cancel any ongoing speech
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "es-AR";
     utterance.rate = 1.05;
     utterance.onend = () => resolve();
-    utterance.onerror = () => resolve(); // Don't block on error
+    utterance.onerror = () => resolve();
     window.speechSynthesis.speak(utterance);
   });
 }
@@ -48,8 +52,16 @@ export function useTTS() {
       stop();
       setStatus("loading");
 
+      // On mobile, use native speechSynthesis directly (no iOS audio restrictions)
+      if (isMobile()) {
+        setStatus("playing");
+        await speakNative(text);
+        setStatus("idle");
+        return;
+      }
+
+      // Desktop: use ElevenLabs
       try {
-        // Try ElevenLabs first
         const res = await fetch("/api/tts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,7 +76,6 @@ export function useTTS() {
         const url = URL.createObjectURL(blob);
         urlRef.current = url;
 
-        // Try to play the audio
         await new Promise<void>((resolve, reject) => {
           const audio = new Audio(url);
           audioRef.current = audio;
@@ -79,8 +90,7 @@ export function useTTS() {
           audio.play().catch(reject);
         });
       } catch {
-        // ElevenLabs or audio.play() failed → fallback to native TTS
-        console.warn("ElevenLabs TTS failed, using native speechSynthesis");
+        // Desktop fallback if ElevenLabs fails
         setStatus("playing");
         await speakNative(text);
         setStatus("idle");
