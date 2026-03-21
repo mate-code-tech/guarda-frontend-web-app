@@ -11,7 +11,7 @@ export function GreetingView() {
           Hola, Gastón
         </h1>
         <p className="text-center text-[15px] text-gray-500">
-          ¿En qué puedo ayudarte hoy?
+          Contame qué medicamentos tomás y te ayudo a verificar si son compatibles.
         </p>
       </div>
     </div>

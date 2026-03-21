@@ -13,20 +13,23 @@ interface InteractionCard {
 
 const SEVERITY_CONFIG: Record<
   Severity,
-  { bg: string; dotColor: string; labelColor: string }
+  { bg: string; border: string; dotColor: string; labelColor: string }
 > = {
   severe: {
     bg: "bg-red-50",
+    border: "border-red-200",
     dotColor: "bg-red-500",
     labelColor: "text-red-600",
   },
   moderate: {
     bg: "bg-amber-50",
+    border: "border-amber-200",
     dotColor: "bg-amber-400",
     labelColor: "text-amber-600",
   },
   safe: {
     bg: "bg-green-50",
+    border: "border-green-200",
     dotColor: "bg-green-500",
     labelColor: "text-green-600",
   },
@@ -61,7 +64,7 @@ function ResultCard({ card }: { card: InteractionCard }) {
 
   return (
     <div
-      className={`flex w-full flex-col gap-2 rounded-xl p-4 ${config.bg}`}
+      className={`flex w-full flex-col gap-2 rounded-xl border p-4 ${config.bg} ${config.border}`}
     >
       <div className="flex items-center gap-1.5">
         <div className={`h-3 w-3 rounded-full ${config.dotColor}`} />
@@ -101,6 +104,12 @@ export function ResultsView() {
             <ResultCard key={card.title} card={card} />
           ))}
         </div>
+
+        {/* Disclaimer */}
+        <p className="mt-4 text-center text-[11px] leading-snug text-gray-400">
+          Esta información es orientativa y no reemplaza el consejo médico.
+          Consultá siempre a tu médico de confianza.
+        </p>
       </div>
     </div>
   );
