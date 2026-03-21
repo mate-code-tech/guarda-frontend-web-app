@@ -149,7 +149,7 @@ function PhoneMockup() {
   }, [flowIndex, current.duration]);
 
   return (
-    <div className="relative mx-auto w-[260px] md:w-[280px]">
+    <div className="relative mx-auto w-[220px] md:w-[240px]">
       <div className="rounded-[36px] border-[6px] border-gray-900 bg-white p-3 shadow-2xl shadow-purple-200/40">
         <div className="mx-auto mb-3 h-[6px] w-20 rounded-full bg-gray-900" />
         {/* Screen — fixed height so phone doesn't resize */}
