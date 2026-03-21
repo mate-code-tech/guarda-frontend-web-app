@@ -11,6 +11,7 @@ import {
   checkInteractions,
   type Medication,
   type InteractionResult,
+  type ProfileWarning,
   type ChatMessageResponse,
 } from "@/lib/api";
 import { useTTS } from "@/hooks/useTTS";
@@ -32,6 +33,7 @@ export default function Home() {
   const [userTranscript, setUserTranscript] = useState("");
   const [medications, setMedications] = useState<Medication[]>([]);
   const [interactions, setInteractions] = useState<InteractionResult[]>([]);
+  const [profileWarnings, setProfileWarnings] = useState<ProfileWarning[]>([]);
 
   const conversationIdRef = useRef<string | null>(null);
   const medicationsRef = useRef<Medication[]>([]);
@@ -79,9 +81,9 @@ export default function Home() {
 
         // If check_interactions has data.results, use it directly
         if (checkTc.data && (checkTc.data as { results?: unknown }).results) {
-          const results = (checkTc.data as { results: InteractionResult[] })
-            .results;
-          setInteractions(results);
+          const data = checkTc.data as { results: InteractionResult[]; profile_warnings?: ProfileWarning[] };
+          setInteractions(data.results);
+          setProfileWarnings(data.profile_warnings ?? []);
           setView("results");
         } else {
           // Otherwise call the endpoint
@@ -91,6 +93,7 @@ export default function Home() {
             medications: genericNames,
           });
           setInteractions(interactionsResponse.results);
+          setProfileWarnings(interactionsResponse.profile_warnings ?? []);
           setView("results");
         }
 
@@ -176,6 +179,7 @@ export default function Home() {
     transcript: liveTranscript,
     start: sttStart,
     stop: sttStop,
+    requestPermission,
   } = useSpeechToText({
     lang: "es-AR",
     continuous: true,
@@ -195,6 +199,10 @@ export default function Home() {
     if (initDoneRef.current) return;
     initDoneRef.current = true;
     setStarted(true);
+
+    // Request mic permission immediately on user gesture (before anything else)
+    // This ensures the permission dialog appears now, not later when TTS finishes.
+    await requestPermission();
 
     let guestId = localStorage.getItem(GUEST_ID_KEY);
 
@@ -218,7 +226,7 @@ export default function Home() {
       setOrbState("idle");
       isProcessingRef.current = false;
     }
-  }, [handleResponse]);
+  }, [handleResponse, requestPermission]);
 
   // Hydration-safe mount flag
   useEffect(() => {
@@ -316,7 +324,7 @@ export default function Home() {
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.35, ease: "easeInOut" }}
           >
-            <ResultsView results={interactions} />
+            <ResultsView results={interactions} profileWarnings={profileWarnings} />
           </motion.div>
         )}
       </AnimatePresence>

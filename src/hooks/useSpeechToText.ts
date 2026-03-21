@@ -16,6 +16,7 @@ interface UseSpeechToTextReturn {
   isSupported: boolean;
   start: () => void;
   stop: () => void;
+  requestPermission: () => Promise<boolean>;
 }
 
 export function useSpeechToText(
@@ -34,6 +35,8 @@ export function useSpeechToText(
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const onResultRef = useRef(onResult);
   const onErrorRef = useRef(onError);
+  const shouldBeListeningRef = useRef(false);
+  const restartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep callback refs fresh
   onResultRef.current = onResult;
@@ -43,15 +46,45 @@ export function useSpeechToText(
     typeof window !== "undefined" &&
     ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
 
+  // Pre-request microphone permission (call early, e.g. on user tap)
+  const requestPermission = useCallback(async (): Promise<boolean> => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Stop tracks immediately — we just needed the permission
+      stream.getTracks().forEach((t) => t.stop());
+      return true;
+    } catch {
+      onErrorRef.current?.("Permiso de micrófono denegado");
+      return false;
+    }
+  }, []);
+
+  const stop = useCallback(() => {
+    shouldBeListeningRef.current = false;
+    if (restartTimeoutRef.current) {
+      clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
+    }
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+      recognitionRef.current = null;
+    }
+    setIsListening(false);
+  }, []);
+
   const start = useCallback(() => {
     if (!isSupported) {
       onErrorRef.current?.("Speech Recognition no está soportado en este navegador");
       return;
     }
 
+    // Signal that we want to be listening
+    shouldBeListeningRef.current = true;
+
     // Clean up any existing instance
     if (recognitionRef.current) {
       recognitionRef.current.abort();
+      recognitionRef.current = null;
     }
 
     const SpeechRecognition =
@@ -81,30 +114,55 @@ export function useSpeechToText(
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      // "no-speech" and "aborted" are not real errors
+      // "no-speech" and "aborted" are expected — not real errors
       if (event.error === "no-speech" || event.error === "aborted") return;
+
+      if (event.error === "not-allowed") {
+        // Permission denied — stop trying
+        shouldBeListeningRef.current = false;
+        onErrorRef.current?.("not-allowed");
+        setIsListening(false);
+        return;
+      }
+
       onErrorRef.current?.(event.error);
-      setIsListening(false);
     };
 
     recognition.onend = () => {
       setIsListening(false);
+      // On mobile, recognition ends after each utterance even in continuous mode.
+      // Auto-restart if we should still be listening.
+      if (shouldBeListeningRef.current) {
+        restartTimeoutRef.current = setTimeout(() => {
+          if (shouldBeListeningRef.current) {
+            start();
+          }
+        }, 200);
+      }
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
-  }, [isSupported, lang, continuous, interimResults]);
 
-  const stop = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      recognitionRef.current = null;
+    try {
+      recognition.start();
+    } catch (err) {
+      // start() can throw if called too fast after abort
+      console.warn("STT start error, retrying:", err);
+      restartTimeoutRef.current = setTimeout(() => {
+        if (shouldBeListeningRef.current) {
+          start();
+        }
+      }, 300);
     }
-  }, []);
+  }, [isSupported, lang, continuous, interimResults]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      shouldBeListeningRef.current = false;
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+      }
       if (recognitionRef.current) {
         recognitionRef.current.abort();
         recognitionRef.current = null;
@@ -112,5 +170,5 @@ export function useSpeechToText(
     };
   }, []);
 
-  return { isListening, transcript, isSupported, start, stop };
+  return { isListening, transcript, isSupported, start, stop, requestPermission };
 }

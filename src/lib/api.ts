@@ -15,35 +15,25 @@ function getGuestId(): string {
 export interface Guest {
   id: string;
   created_at: string;
-  preferred_mode: "text" | "voice";
 }
 
-interface CreateGuestRequest {
-  preferred_mode?: "text" | "voice";
-}
-
-async function mockCreateGuest(
-  body: CreateGuestRequest
-): Promise<Guest> {
+async function mockCreateGuest(): Promise<Guest> {
   await new Promise((r) => setTimeout(r, 300));
   return {
     id: crypto.randomUUID(),
     created_at: new Date().toISOString(),
-    preferred_mode: body.preferred_mode ?? "text",
   };
 }
 
-export async function createGuest(
-  body: CreateGuestRequest = {}
-): Promise<Guest> {
+export async function createGuest(): Promise<Guest> {
   if (USE_MOCKS) {
-    return mockCreateGuest(body);
+    return mockCreateGuest();
   }
 
   const res = await fetch(`${API_URL}/guests`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ preferred_mode: body.preferred_mode ?? "text" }),
+    body: JSON.stringify({}),
   });
 
   if (!res.ok) {
@@ -157,8 +147,17 @@ export interface CheckInteractionsRequest {
   medications: string[];
 }
 
+export interface ProfileWarning {
+  type: "age" | "condition" | "allergy";
+  severity: "mild" | "moderate" | "severe";
+  drug: string;
+  description: string;
+  recommendation: string;
+}
+
 export interface CheckInteractionsResponse {
   results: InteractionResult[];
+  profile_warnings: ProfileWarning[];
 }
 
 async function mockCheckInteractions(): Promise<CheckInteractionsResponse> {
@@ -193,6 +192,7 @@ async function mockCheckInteractions(): Promise<CheckInteractionsResponse> {
         source: "dataset",
       },
     ],
+    profile_warnings: [],
   };
 }
 
