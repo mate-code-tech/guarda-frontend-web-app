@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { GreetingView } from "@/components/GreetingView";
 import { MedicationsView } from "@/components/MedicationsView";
 import { ResultsView } from "@/components/ResultsView";
@@ -15,6 +16,7 @@ import {
 import { useTTS } from "@/hooks/useTTS";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
 import type { OrbState } from "@/components/Orb";
+import { SiriBorder } from "@/components/SiriBorder";
 
 const GUEST_ID_KEY = "guarda_guest_id";
 const DEBOUNCE_MS = 2000;
@@ -234,50 +236,91 @@ export default function Home() {
   // Server and client both render this on first pass (avoids hydration mismatch)
   if (!mounted || !started) {
     return (
-      <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-white pt-[62px]">
-        <button
-          onClick={startFlow}
-          className="flex flex-1 flex-col items-center justify-center gap-6 px-6"
-        >
-          <div className="relative h-[200px] w-[200px] shrink-0">
-            <div className="absolute inset-0 rounded-full bg-purple-500 opacity-[0.19] blur-[40px]" />
-            <div
-              className="absolute left-[30px] top-[30px] h-[140px] w-[140px] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, #A78BFA 0%, #8B5CF6 50%, #6D28D9 100%)",
-                boxShadow: "0 0 40px rgba(139, 92, 246, 0.25)",
-              }}
-            />
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">Guarda</h1>
-            <p className="text-center text-[15px] text-gray-500">
-              Tocá para comenzar
-            </p>
-          </div>
-        </button>
+      <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px]">
+        <div className="flex flex-1 flex-col items-center justify-center gap-10 px-6 pb-16">
+          {/* App name */}
+          <h1 className="text-3xl font-bold uppercase tracking-widest text-gray-900">
+            Guarda
+          </h1>
+
+          {/* Orbe — tap to start */}
+          <button
+            onClick={startFlow}
+            className="cursor-pointer transition-transform duration-200 active:scale-95"
+          >
+            <div className="relative h-[200px] w-[200px] shrink-0">
+              <div className="absolute inset-0 rounded-full bg-purple-500 opacity-[0.19] blur-[40px]" />
+              <div
+                className="absolute left-[30px] top-[30px] h-[140px] w-[140px] rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle, #A78BFA 0%, #8B5CF6 50%, #6D28D9 100%)",
+                  boxShadow: "0 0 40px rgba(139, 92, 246, 0.25)",
+                }}
+              />
+            </div>
+          </button>
+
+          {/* Instruction */}
+          <p className="text-sm text-gray-400">
+            Tocá el orbe para comenzar
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-white pt-[62px]">
-      {view === "greeting" && (
-        <GreetingView
-          orbState={orbState}
-          assistantMessage={assistantMessage}
-          transcript={userTranscript}
-        />
-      )}
-      {view === "medications" && (
-        <MedicationsView
-          medications={medications}
-          orbState={orbState}
-          assistantMessage={assistantMessage}
-        />
-      )}
-      {view === "results" && <ResultsView results={interactions} />}
+    <div className="relative flex h-dvh w-full max-w-[393px] flex-col">
+      <SiriBorder active={orbState === "listening" && userTranscript.length > 0} />
+      <div className="relative flex flex-1 flex-col overflow-hidden rounded-[40px] bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px]">
+      <AnimatePresence mode="wait">
+        {view === "greeting" && (
+          <motion.div
+            key="greeting"
+            className="flex flex-1 flex-col"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <GreetingView
+              orbState={orbState}
+              assistantMessage={assistantMessage}
+              transcript={userTranscript}
+            />
+          </motion.div>
+        )}
+        {view === "medications" && (
+          <motion.div
+            key="medications"
+            className="flex flex-1 flex-col"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <MedicationsView
+              medications={medications}
+              orbState={orbState}
+              assistantMessage={assistantMessage}
+            />
+          </motion.div>
+        )}
+        {view === "results" && (
+          <motion.div
+            key="results"
+            className="flex flex-1 flex-col"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <ResultsView results={interactions} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      </div>
     </div>
   );
 }

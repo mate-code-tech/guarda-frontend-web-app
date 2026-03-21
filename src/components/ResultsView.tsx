@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Orb } from "./Orb";
 import type { InteractionResult } from "@/lib/api";
 
@@ -43,15 +44,27 @@ const SEVERITY_CONFIG: Record<
   },
 };
 
-function ResultCard({ result }: { result: InteractionResult }) {
+function ResultCard({ result, index }: { result: InteractionResult; index: number }) {
   const config = SEVERITY_CONFIG[result.severity];
 
   return (
-    <div
+    <motion.div
       className={`flex w-full flex-col gap-2 rounded-xl border p-4 ${config.bg} ${config.border}`}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.4,
+        ease: "easeOut",
+        delay: index * 0.1,
+      }}
     >
       <div className="flex items-center gap-1.5">
-        <div className={`h-3 w-3 rounded-full ${config.dotColor}`} />
+        <motion.div
+          className={`h-3 w-3 rounded-full ${config.dotColor}`}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: index * 0.1 + 0.2, type: "spring", stiffness: 400, damping: 15 }}
+        />
         <span className={`text-xs font-semibold ${config.labelColor}`}>
           {config.label}
         </span>
@@ -67,41 +80,62 @@ function ResultCard({ result }: { result: InteractionResult }) {
           {result.recommendation}
         </p>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 export function ResultsView({ results }: ResultsViewProps) {
   return (
-    <div className="flex flex-1 flex-col">
+    <motion.div
+      className="flex flex-1 flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
       {/* Top: orb + status */}
       <div className="flex flex-col items-center gap-3 px-6 pb-4 pt-5">
         <Orb size="small" state="idle" />
-        <p className="text-center text-[13px] font-semibold text-green-500">
+        <motion.p
+          className="text-center text-[13px] font-semibold text-green-500"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.2 }}
+        >
           Análisis completo
-        </p>
+        </motion.p>
       </div>
 
       {/* Panel */}
-      <div className="flex flex-1 flex-col rounded-t-3xl border border-gray-200 bg-gray-50 p-5">
+      <motion.div
+        className="flex flex-1 flex-col rounded-t-3xl border border-gray-200 bg-gray-50 p-5"
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.45, ease: "easeOut", delay: 0.1 }}
+      >
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-gray-900">Interacciones</h2>
         </div>
 
         <div className="mt-3 flex flex-col gap-3">
-          {results.map((result) => (
+          {results.map((result, i) => (
             <ResultCard
               key={`${result.drug_a}-${result.drug_b}`}
               result={result}
+              index={i}
             />
           ))}
         </div>
 
-        <p className="mt-4 text-center text-[11px] leading-snug text-gray-400">
+        <motion.p
+          className="mt-4 text-center text-[11px] leading-snug text-gray-400"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: results.length * 0.1 + 0.3 }}
+        >
           Esta información es orientativa y no reemplaza el consejo médico.
           Consultá siempre a tu médico de confianza.
-        </p>
-      </div>
-    </div>
+        </motion.p>
+      </motion.div>
+    </motion.div>
   );
 }
