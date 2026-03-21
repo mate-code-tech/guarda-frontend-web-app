@@ -22,6 +22,8 @@ const DEBOUNCE_MS = 2000;
 type AppView = "greeting" | "medications" | "results";
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+  const [started, setStarted] = useState(false);
   const [view, setView] = useState<AppView>("greeting");
   const [orbState, setOrbState] = useState<OrbState>("idle");
   const [assistantMessage, setAssistantMessage] = useState("");
@@ -40,6 +42,14 @@ export default function Home() {
   // --- Handle backend response: TTS + tool-calls ---
   const handleResponse = useCallback(
     async (response: ChatMessageResponse) => {
+      // Immediately stop listening and cancel any pending debounce
+      sttStop();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+      setUserTranscript("");
+
       conversationIdRef.current = response.conversation_id;
 
       // Check for normalize_medications tool-call
@@ -178,38 +188,40 @@ export default function Home() {
     }
   }, [liveTranscript]);
 
-  // --- Init: create guest + send "Hola" ---
-  useEffect(() => {
+  // --- Start flow (triggered by user tap to unlock audio) ---
+  const startFlow = useCallback(async () => {
     if (initDoneRef.current) return;
     initDoneRef.current = true;
+    setStarted(true);
 
-    async function init() {
-      let guestId = localStorage.getItem(GUEST_ID_KEY);
+    let guestId = localStorage.getItem(GUEST_ID_KEY);
 
-      if (!guestId) {
-        const guest = await createGuest();
-        localStorage.setItem(GUEST_ID_KEY, guest.id);
-        guestId = guest.id;
-      }
-
-      isProcessingRef.current = true;
-      setOrbState("thinking");
-
-      try {
-        const response = await sendMessage({
-          conversation_id: null,
-          message: "Hola",
-        });
-        await handleResponse(response);
-      } catch (err) {
-        console.error("Init error:", err);
-        setOrbState("idle");
-        isProcessingRef.current = false;
-      }
+    if (!guestId) {
+      const guest = await createGuest();
+      localStorage.setItem(GUEST_ID_KEY, guest.id);
+      guestId = guest.id;
     }
 
-    init();
+    isProcessingRef.current = true;
+    setOrbState("thinking");
+
+    try {
+      const response = await sendMessage({
+        conversation_id: null,
+        message: "Hola",
+      });
+      await handleResponse(response);
+    } catch (err) {
+      console.error("Init error:", err);
+      setOrbState("idle");
+      isProcessingRef.current = false;
+    }
   }, [handleResponse]);
+
+  // Hydration-safe mount flag
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cleanup debounce on unmount
   useEffect(() => {
@@ -218,6 +230,36 @@ export default function Home() {
       stopTTS();
     };
   }, [stopTTS]);
+
+  // Server and client both render this on first pass (avoids hydration mismatch)
+  if (!mounted || !started) {
+    return (
+      <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-white pt-[62px]">
+        <button
+          onClick={startFlow}
+          className="flex flex-1 flex-col items-center justify-center gap-6 px-6"
+        >
+          <div className="relative h-[200px] w-[200px] shrink-0">
+            <div className="absolute inset-0 rounded-full bg-purple-500 opacity-[0.19] blur-[40px]" />
+            <div
+              className="absolute left-[30px] top-[30px] h-[140px] w-[140px] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, #A78BFA 0%, #8B5CF6 50%, #6D28D9 100%)",
+                boxShadow: "0 0 40px rgba(139, 92, 246, 0.25)",
+              }}
+            />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <h1 className="text-2xl font-bold text-gray-900">Guarda</h1>
+            <p className="text-center text-[15px] text-gray-500">
+              Tocá para comenzar
+            </p>
+          </div>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-white pt-[62px]">
