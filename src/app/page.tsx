@@ -41,6 +41,7 @@ export default function Home() {
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isProcessingRef = useRef(false);
   const initDoneRef = useRef(false);
+  const sttSupportedRef = useRef(false);
 
   const { speak, stop: stopTTS, unlock: unlockAudio } = useTTS();
 
@@ -127,12 +128,12 @@ export default function Home() {
       // TTS done → start listening (or show text input fallback)
       setUserTranscript("");
       setOrbState("listening");
-      if (sttSupported) {
+      if (sttSupportedRef.current) {
         sttStart();
       }
       isProcessingRef.current = false;
     },
-    [speak, sttSupported]
+    [speak]
   );
 
   // --- Send user message to backend ---
@@ -190,6 +191,9 @@ export default function Home() {
     onResult: handleSTTResult,
     onError: (err) => console.warn("STT error:", err),
   });
+
+  // Keep ref in sync
+  sttSupportedRef.current = sttSupported;
 
   // Show live transcript while listening
   useEffect(() => {
