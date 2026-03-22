@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GreetingView } from "@/components/GreetingView";
 import { MedicationsView } from "@/components/MedicationsView";
 import { ResultsView } from "@/components/ResultsView";
+import { FarewellView } from "@/components/FarewellView";
 import {
   createGuest,
   sendMessage,
@@ -22,7 +23,7 @@ import { SiriBorder } from "@/components/SiriBorder";
 const GUEST_ID_KEY = "guarda_guest_id";
 const DEBOUNCE_MS = 2000;
 
-type AppView = "greeting" | "medications" | "results";
+type AppView = "greeting" | "medications" | "results" | "farewell";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -58,15 +59,42 @@ export default function Home() {
 
       conversationIdRef.current = response.conversation_id;
 
+      // Check for end_conversation tool-call
+      const endTc = response.tool_calls.find(
+        (tc) => tc.name === "end_conversation"
+      );
+      if (endTc) {
+        if (response.message) {
+          setAssistantMessage(response.message);
+          setOrbState("speaking");
+          try {
+            await speak(response.message);
+          } catch {
+            // TTS failed, continue
+          }
+        }
+        setOrbState("idle");
+        setView("farewell");
+        isProcessingRef.current = false;
+        return;
+      }
+
       // Check for normalize_medications tool-call
       const normalizeTc = response.tool_calls.find(
         (tc) => tc.name === "normalize_medications"
       );
       if (normalizeTc?.data) {
-        const meds = (normalizeTc.data as { medications: Medication[] })
+        const newMeds = (normalizeTc.data as { medications: Medication[] })
           .medications;
-        medicationsRef.current = meds;
-        setMedications(meds);
+        // Merge with existing medications (avoid duplicates by generic_name)
+        const existing = medicationsRef.current;
+        const existingNames = new Set(existing.map((m) => m.generic_name));
+        const merged = [
+          ...existing,
+          ...newMeds.filter((m) => !existingNames.has(m.generic_name)),
+        ];
+        medicationsRef.current = merged;
+        setMedications(merged);
         setView("medications");
       }
 
@@ -99,7 +127,7 @@ export default function Home() {
           setView("results");
         }
 
-        // TTS the message then stop the cycle (results are the end state)
+        // TTS the message, then keep listening for follow-up questions
         if (response.message) {
           setAssistantMessage(response.message);
           setOrbState("speaking");
@@ -109,7 +137,12 @@ export default function Home() {
             // TTS failed, continue anyway
           }
         }
-        setOrbState("idle");
+        // Keep listening — user might want to ask more or start a new check
+        setUserTranscript("");
+        setOrbState("listening");
+        if (sttSupportedRef.current) {
+          sttStart();
+        }
         isProcessingRef.current = false;
         return;
       }
@@ -252,7 +285,7 @@ export default function Home() {
   // Server and client both render this on first pass (avoids hydration mismatch)
   if (!mounted || !started) {
     return (
-      <div className="flex h-dvh w-full max-w-[393px] flex-col overflow-hidden rounded-[40px] bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px]">
+      <div className="flex h-dvh w-full flex-col overflow-hidden bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px] md:pt-10">
         <div className="flex flex-1 flex-col items-center justify-center gap-10 px-6 pb-16">
           {/* App name */}
           <h1 className="text-3xl font-bold uppercase tracking-widest text-gray-900">
@@ -287,9 +320,9 @@ export default function Home() {
   }
 
   return (
-    <div className="relative flex h-dvh w-full max-w-[393px] flex-col">
+    <div className="relative flex h-dvh w-full flex-col">
       <SiriBorder active={orbState === "listening" && userTranscript.length > 0} />
-      <div className="relative flex flex-1 flex-col overflow-hidden rounded-[40px] bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px]">
+      <div className="relative flex flex-1 flex-col overflow-hidden bg-gradient-to-b from-white via-purple-50 to-purple-100 pt-[62px] md:pt-10">
       <div className="flex min-h-0 flex-1 flex-col">
       <AnimatePresence mode="wait">
         {view === "greeting" && (
@@ -331,6 +364,17 @@ export default function Home() {
               medications={medications}
               orbState={orbState}
               assistantMessage={assistantMessage}
+              transcript={userTranscript}
+              showTextInput={!sttSupportedRef.current}
+              textInput={textInput}
+              onTextInputChange={setTextInput}
+              onTextInputSubmit={() => {
+                if (textInput.trim()) {
+                  const msg = textInput;
+                  setTextInput("");
+                  sendUserMessage(msg);
+                }
+              }}
             />
           </motion.div>
         )}
@@ -343,7 +387,62 @@ export default function Home() {
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.35, ease: "easeInOut" }}
           >
-            <ResultsView results={interactions} profileWarnings={profileWarnings} />
+            <ResultsView
+              results={interactions}
+              profileWarnings={profileWarnings}
+              orbState={orbState}
+              assistantMessage={assistantMessage}
+              transcript={userTranscript}
+              showTextInput={!sttSupportedRef.current}
+              textInput={textInput}
+              onTextInputChange={setTextInput}
+              onTextInputSubmit={() => {
+                if (textInput.trim()) {
+                  const msg = textInput;
+                  setTextInput("");
+                  sendUserMessage(msg);
+                }
+              }}
+            />
+          </motion.div>
+        )}
+        {view === "farewell" && (
+          <motion.div
+            key="farewell"
+            className="flex flex-1 flex-col"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <FarewellView
+              assistantMessage={assistantMessage}
+              onRestart={() => {
+                // Reset state for a new consultation
+                sttStop();
+                stopTTS();
+                conversationIdRef.current = null;
+                medicationsRef.current = [];
+                setMedications([]);
+                setInteractions([]);
+                setProfileWarnings([]);
+                setAssistantMessage("");
+                setUserTranscript("");
+                setTextInput("");
+                isProcessingRef.current = false;
+                setView("greeting");
+                setOrbState("thinking");
+                // Start a new conversation
+                sendMessage({
+                  conversation_id: null,
+                  message: "Hola",
+                }).then((response) => {
+                  handleResponse(response);
+                }).catch(() => {
+                  setOrbState("idle");
+                });
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

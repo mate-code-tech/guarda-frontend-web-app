@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Orb } from "./Orb";
+import { Orb, OrbState } from "./Orb";
+import { AnimatedMessage } from "./AnimatedMessage";
 import type { InteractionResult, ProfileWarning } from "@/lib/api";
 
 type Severity = InteractionResult["severity"];
@@ -9,6 +10,13 @@ type Severity = InteractionResult["severity"];
 interface ResultsViewProps {
   results: InteractionResult[];
   profileWarnings?: ProfileWarning[];
+  orbState?: OrbState;
+  assistantMessage?: string;
+  transcript?: string;
+  showTextInput?: boolean;
+  textInput?: string;
+  onTextInputChange?: (value: string) => void;
+  onTextInputSubmit?: () => void;
 }
 
 const SEVERITY_CONFIG: Record<
@@ -132,7 +140,17 @@ function ProfileWarningCard({ warning, index, offset }: { warning: ProfileWarnin
   );
 }
 
-export function ResultsView({ results, profileWarnings = [] }: ResultsViewProps) {
+export function ResultsView({
+  results,
+  profileWarnings = [],
+  orbState = "idle",
+  assistantMessage,
+  transcript,
+  showTextInput = false,
+  textInput = "",
+  onTextInputChange,
+  onTextInputSubmit,
+}: ResultsViewProps) {
   return (
     <motion.div
       className="flex min-h-0 flex-1 flex-col"
@@ -142,15 +160,31 @@ export function ResultsView({ results, profileWarnings = [] }: ResultsViewProps)
     >
       {/* Top: orb + status */}
       <div className="shrink-0 flex flex-col items-center gap-3 px-6 pb-4 pt-5">
-        <Orb size="small" state="idle" />
-        <motion.p
-          className="text-center text-[13px] font-semibold text-green-500"
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.2 }}
-        >
-          Análisis completo
-        </motion.p>
+        <Orb size="small" state={orbState} />
+        {assistantMessage ? (
+          <AnimatedMessage
+            text={assistantMessage}
+            className="text-center text-[13px] font-medium text-gray-500"
+          />
+        ) : (
+          <motion.p
+            className="text-center text-[13px] font-semibold text-green-500"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.2 }}
+          >
+            Análisis completo
+          </motion.p>
+        )}
+        {transcript && (
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center text-sm font-medium text-purple-600"
+          >
+            {transcript}
+          </motion.p>
+        )}
       </div>
 
       {/* Panel */}
@@ -204,6 +238,39 @@ export function ResultsView({ results, profileWarnings = [] }: ResultsViewProps)
           Esta información es orientativa y no reemplaza el consejo médico.
           Consultá siempre a tu médico de confianza.
         </motion.p>
+
+        {/* Text input fallback */}
+        {showTextInput && orbState === "listening" && (
+          <motion.form
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-4 flex w-full gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onTextInputSubmit?.();
+            }}
+          >
+            <input
+              type="text"
+              value={textInput}
+              onChange={(e) => onTextInputChange?.(e.target.value)}
+              placeholder="¿Tenés otra consulta?"
+              autoFocus
+              className="flex-1 rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400"
+            />
+            <button
+              type="submit"
+              disabled={!textInput.trim()}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-500 text-white disabled:opacity-40"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </motion.form>
+        )}
       </motion.div>
     </motion.div>
   );

@@ -4,12 +4,7 @@ import { useState, useRef, useCallback } from "react";
 
 type TTSStatus = "idle" | "loading" | "playing" | "error";
 
-function isMobile(): boolean {
-  if (typeof navigator === "undefined") return false;
-  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-}
-
-/** Fallback: use browser's native speechSynthesis (works on iOS without gesture) */
+/** Fallback: use browser's native speechSynthesis */
 function speakNative(text: string): Promise<void> {
   return new Promise((resolve) => {
     if (!("speechSynthesis" in window)) {
@@ -52,15 +47,7 @@ export function useTTS() {
       stop();
       setStatus("loading");
 
-      // On mobile, use native speechSynthesis directly (no iOS audio restrictions)
-      if (isMobile()) {
-        setStatus("playing");
-        await speakNative(text);
-        setStatus("idle");
-        return;
-      }
-
-      // Desktop: use ElevenLabs
+      // Always try ElevenLabs first, fallback to native only if it fails
       try {
         const res = await fetch("/api/tts", {
           method: "POST",
@@ -90,7 +77,7 @@ export function useTTS() {
           audio.play().catch(reject);
         });
       } catch {
-        // Desktop fallback if ElevenLabs fails
+        // ElevenLabs failed or audio.play() blocked → native fallback
         setStatus("playing");
         await speakNative(text);
         setStatus("idle");

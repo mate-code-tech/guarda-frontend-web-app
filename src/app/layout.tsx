@@ -25,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className="flex min-h-dvh items-center justify-center bg-neutral-100">
+      <body className="min-h-dvh bg-neutral-100">
         {children}
       </body>
     </html>
